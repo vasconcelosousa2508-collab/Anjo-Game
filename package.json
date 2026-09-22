@@ -1,0 +1,24 @@
+{
+  "name": "anjo-game",
+  "version": "1.0.0",
+  "description": "> Uma aplicação web simples e acolhedora projetada para conectar famílias que moram longe, resgatando a tradição das cartinhas e do \"Anjo\" durante a época natalina.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vasconcelosousa2508-collab/Anjo-Game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vasconcelosousa2508-collab/Anjo-Game/issues"
+  },
+  "homepage": "https://github.com/vasconcelosousa2508-collab/Anjo-Game#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "express-generator": "^4.14.1"
+  }
+}
