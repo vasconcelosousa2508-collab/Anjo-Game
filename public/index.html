@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Protótipo - Criar Sala</title>
+</head>
+<body>
+  <h1>Protótipo: Anjo </h1>
+  <label for="nome">Qual é o seu nome?</label>
+  <input type="text" id="nome" placeholder="Digite seu nome">
+  <button onclick="criarSala()">Gerar Link</button>
+
+  <div id="resultado" style="margin-top: 20px;"></div>
+
+  <script>
+    async function criarSala() {
+      const nome = document.getElementById('nome').value;
+
+      if (!nome) {
+        alert('Por favor, digite um nome!');
+        return;
+      }
+
+      // Faz a requisição POST para a rota do backend
+      const resposta = await fetch('/api/salas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome })
+      });
+
+      const dados = await resposta.json();
+
+      if (dados.id) {
+        const link = `${window.location.origin}/sala.html?id=${dados.id}`;
+        document.getElementById('resultado').innerHTML = `
+          <p>Sala criada com sucesso!</p>
+          <a href="${link}" target="_blank">Acessar Sala Gerada (${link})</a>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

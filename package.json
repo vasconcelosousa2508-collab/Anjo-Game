@@ -18,7 +18,12 @@
   },
   "homepage": "https://github.com/vasconcelosousa2508-collab/Anjo-Game#readme",
   "dependencies": {
+    "@google-cloud/firestore": "^9.2.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.3",
     "express": "^5.2.1",
-    "express-generator": "^4.14.1"
+    "express-generator": "^4.16.1",
+    "firebase": "^12.19.0",
+    "firebase-admin": "^14.5.0"
   }
 }
