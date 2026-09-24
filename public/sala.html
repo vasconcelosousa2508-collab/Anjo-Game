@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Protótipo - Ambiente da Sala</title>
+</head>
+<body>
+  <h1>Bem-vindo à Sala!</h1>
+  <h2 id="mensagem">Carregando dados...</h2>
+
+  <script>
+    async function carregarSala() {
+      // Pega o parâmetro "?id=..." que está na URL do navegador
+      const params = new URLSearchParams(window.location.search);
+      const salaId = params.get('id');
+
+      if (!salaId) {
+        document.getElementById('mensagem').innerText = 'ID da sala não fornecido!';
+        return;
+      }
+
+      // Faz o GET para a rota do backend passando o ID
+      const resposta = await fetch(`/api/salas/${salaId}`);
+      
+      if (resposta.ok) {
+        const dados = await resposta.json();
+        document.getElementById('mensagem').innerText = `Nome cadastrado nesta sala: ${dados.nome}`;
+      } else {
+        document.getElementById('mensagem').innerText = 'Sala não encontrada no banco de dados.';
+      }
+    }
+
+    carregarSala();
+  </script>
+</body>
+</html>
