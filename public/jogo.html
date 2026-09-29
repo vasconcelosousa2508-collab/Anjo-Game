@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Anjo de Natal - Espaço do Jogo</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; text-align: center; }
+    input, button { padding: 10px; width: 100%; margin-top: 10px; box-sizing: border-box; }
+    #espacioPessoal { display: none; background: #eef9f2; padding: 20px; border-radius: 8px; border: 2px solid #2e7d32; }
+  </style>
+</head>
+<body>
+
+  <!-- TELA DE LOGIN (Pede o Código) -->
+  <div id="telaLogin">
+    <h2>Bem-vindo ao Anjo</h2>
+    <p>Digite seu código de acesso individual recebido do organizador:</p>
+    <input type="text" id="codigoAcesso" placeholder="Ex: MARIA-8A9X">
+    <button onclick="entrarNoJogo()">Acessar</button>
+  </div>
+
+  <!-- ESPAÇO PESSOAL DO JOGADOR -->
+  <div id="espacioPessoal">
+    <h1 id="boasVindas"></h1>
+    <p>Este é o seu painel individual!</p>
+    <hr>
+    <p><em>(Futuramente aqui será quem é o protegido, envio de cartinhas e leitura as mensagens do anjo)</em></p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const familiaId = params.get('id');
+
+    if (!familiaId) {
+      document.body.innerHTML = '<h2>Erro: Link da família inválido ou ausente!</h2>';
+    }
+
+    async function entrarNoJogo() {
+      const codigo = document.getElementById('codigoAcesso').value;
+
+      if (!codigo) {
+        alert('Digite seu código!');
+        return;
+      }
+
+      const resposta = await fetch(`/api/familias/${familiaId}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codigo })
+      });
+
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        // Oculta a tela de login e mostra o espaço pessoal
+        document.getElementById('telaLogin').style.display = 'none';
+        document.getElementById('espacioPessoal').style.display = 'block';
+        
+        document.getElementById('boasVindas').innerText = `Olá, ${dados.nome}! ✨`;
+      } else {
+        alert(dados.erro || 'Erro ao entrar.');
+      }
+    }
+  </script>
+</body>
+</html>

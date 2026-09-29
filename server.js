@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const cors = require('cors');
 const db = require('./firebaseConfig');
@@ -6,50 +5,91 @@ const db = require('./firebaseConfig');
 const app = express();
 app.use(express.json());
 app.use(cors());
-
-// Serve os arquivos estáticos da pasta "public"
 app.use(express.static('public'));
 
-// ROTA 1: Criar uma nova sala (salvar o nome no Firestore)
-app.post('/api/salas', async (req, res) => {
-  try {
-    const { nome } = req.body;
+function gerarCodigo() {
+  return Math.random().toString(36).substring(2, 6).toUpperCase();
+}
 
-    if (!nome) {
-      return res.status(400).json({ erro: 'O nome é obrigatório' });
+app.post('/api/familias', async (req, res) => {
+  try {
+    const { nomeFamilia, participantes } = req.body;
+
+    if (!nomeFamilia || !participantes || !Array.isArray(participantes) || participantes.length === 0) {
+      return res.status(400).json({ erro: 'Informe o nome da família e ao menos 1 participante.' });
     }
 
-    // Grava na coleção "salas" usando a API nativa do Firestore
-    const docRef = await db.collection('salas').add({
-      nome: nome,
+    // Criar documento da Família
+    const familiaRef = await db.collection('familias').add({
+      nomeFamilia: nomeFamilia,
       criadoEm: new Date()
     });
 
-    res.status(201).json({ id: docRef.id });
+    const resumoCodigos = [];
+
+    // Criar cada participante
+    for (let nome of participantes) {
+      const nomeLimpo = String(nome).trim();
+      if (!nomeLimpo) continue;
+
+      const primeiroNome = nomeLimpo.split(' ')[0].toUpperCase();
+      const codigoAcesso = primeiroNome + '-' + gerarCodigo();
+
+      await db.collection('participantes').add({
+        familiaId: familiaRef.id,
+        nome: nomeLimpo,
+        codigoAcesso: codigoAcesso
+      });
+
+      resumoCodigos.push({ nome: nomeLimpo, codigo: codigoAcesso });
+    }
+
+    res.status(201).json({
+      familiaId: familiaRef.id,
+      mensagem: 'Ambiente de jogo criado com sucesso!',
+      codigos: resumoCodigos
+    });
+
   } catch (error) {
-    console.error('Erro ao criar sala:', error);
-    res.status(500).json({ erro: 'Erro ao criar sala no banco de dados' });
+    console.error('ERRO DETALHADO NO FIREBASE:', error);
+    res.status(500).json({ erro: 'Erro ao salvar no banco de dados. Verifique o terminal do servidor.' });
   }
 });
 
-// ROTA 2: Buscar dados de uma sala específica pelo ID
-app.get('/api/salas/:id', async (req, res) => {
+app.post('/api/familias/:id/login', async (req, res) => {
   try {
     const { id } = req.params;
-    const doc = await db.collection('salas').doc(id).get();
+    const { codigo } = req.body;
 
-    if (!doc.exists) {
-      return res.status(404).json({ erro: 'Sala não encontrada' });
+    if (!codigo) {
+      return res.status(400).json({ erro: 'Digite seu código de acesso.' });
     }
 
-    res.json(doc.data());
+    const snapshot = await db.collection('participantes')
+      .where('familiaId', '==', id)
+      .where('codigoAcesso', '==', String(codigo).trim().toUpperCase())
+      .get();
+
+    if (snapshot.empty) {
+      return res.status(401).json({ erro: 'Código de acesso inválido para esta família!' });
+    }
+
+    const participanteDoc = snapshot.docs[0];
+    const dados = participanteDoc.data();
+
+    res.json({
+      id: participanteDoc.id,
+      nome: dados.nome,
+      codigoAcesso: dados.codigoAcesso
+    });
+
   } catch (error) {
-    console.error('Erro ao buscar sala:', error);
-    res.status(500).json({ erro: 'Erro ao buscar sala' });
+    console.error('ERRO NO LOGIN:', error);
+    res.status(500).json({ erro: 'Erro ao tentar acessar.' });
   }
 });
 
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+  console.log('Servidor rodando em http://localhost:' + PORT);
 });
