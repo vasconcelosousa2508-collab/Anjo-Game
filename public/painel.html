@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Anjo - Meu Painel</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; }
+    .card { background: #f9f9f9; padding: 15px; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; }
+    .header { text-align: center; }
+    button.sair { background: #d32f2f; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; float: right; }
+  </style>
+</head>
+<body>
+
+  <button class="sair" onclick="sair()">Sair</button>
+  
+  <div class="header">
+    <h1 id="boasVindas">Carregando...</h1>
+    <p>Ambiente de jogo</p>
+  </div>
+
+  <div class="card">
+    <h3>Seu Amigo Secreto / Protegido</h3>
+    <p id="amigoSecreto">Aguardando realização do sorteio...</p>
+  </div>
+
+  <div class="card">
+    <h3>Suas Cartinhas & Presentes</h3>
+    <p><em>(Espaço reservado para envio de mensagens privadas e listas de presentes)</em></p>
+  </div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const participanteId = params.get('id');
+  const familiaId = sessionStorage.getItem('familiaId');
+
+  if (!participanteId || sessionStorage.getItem('participanteId') !== participanteId) {
+    alert('Sessão inválida! Faça login novamente.');
+    window.location.href = '/';
+  } else {
+    carregarDados();
+  }
+
+  async function carregarDados() {
+    try {
+      const resposta = await fetch('/api/participantes/' + participanteId);
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        document.getElementById('boasVindas').innerText = 'Olá, ' + dados.nome + '! ✨';
+      } else {
+        alert('Erro ao carregar dados.');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function sair() {
+    // Guarda o id da familia em uma constante antes de limpar o sessionStorage
+    const idFamiliaSalvo = sessionStorage.getItem('familiaId');
+
+    // Limpa os dados de sessão do navegador
+    sessionStorage.removeItem('participanteId');
+    sessionStorage.removeItem('familiaId');
+
+    // Se houver ID de família, volta pro login dela. Caso contrário, vai pra tela inicial
+    if (idFamiliaSalvo) {
+      window.location.href = '/jogo.html?id=' + idFamiliaSalvo;
+    } else {
+      window.location.href = '/';
+    }
+  }
+</script>
+</body>
+</html>

@@ -2,40 +2,74 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Protótipo - Criar Sala</title>
+  <title>Criar Jogo - Anjo de Natal</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; }
+    .campo { margin-bottom: 15px; }
+    input, button { padding: 8px; width: 100%; box-sizing: border-box; }
+    button { cursor: pointer; margin-top: 10px; }
+    ul { background: #f4f4f4; padding: 15px 30px; border-radius: 5px; }
+  </style>
 </head>
 <body>
-  <h1>Protótipo: Anjo </h1>
-  <label for="nome">Qual é o seu nome?</label>
-  <input type="text" id="nome" placeholder="Digite seu nome">
-  <button onclick="criarSala()">Gerar Link</button>
+  <h1>Anjo - Criar Ambiente</h1>
+
+  <div class="campo">
+    <label>Nome da Família:</label>
+    <input type="text" id="nomeFamilia" placeholder="Ex: Família Silva">
+  </div>
+
+  <div class="campo">
+    <label>Participantes (separados por vírgula):</label>
+    <input type="text" id="participantes" placeholder="Ex: Maria, João, Pedro">
+  </div>
+
+  <button onclick="criarAmbiente()">Criar jogo</button>
 
   <div id="resultado" style="margin-top: 20px;"></div>
 
   <script>
-    async function criarSala() {
-      const nome = document.getElementById('nome').value;
+    async function criarAmbiente() {
+      const nomeFamilia = document.getElementById('nomeFamilia').value;
+      const textoParticipantes = document.getElementById('participantes').value;
 
-      if (!nome) {
-        alert('Por favor, digite um nome!');
+      if (!nomeFamilia || !textoParticipantes) {
+        alert('Preencha o nome da família e os participantes!');
         return;
       }
 
-      // Faz a requisição POST para a rota do backend
-      const resposta = await fetch('/api/salas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome })
-      });
+      const lista = textoParticipantes.split(',').map(function(n) { return n.trim(); }).filter(function(n) { return n; });
 
-      const dados = await resposta.json();
+      try {
+        const resposta = await fetch('/api/familias', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nomeFamilia: nomeFamilia, participantes: lista })
+        });
 
-      if (dados.id) {
-        const link = `${window.location.origin}/sala.html?id=${dados.id}`;
-        document.getElementById('resultado').innerHTML = `
-          <p>Sala criada com sucesso!</p>
-          <a href="${link}" target="_blank">Acessar Sala Gerada (${link})</a>
-        `;
+        const dados = await resposta.json();
+
+        if (resposta.ok) {
+          const linkFamilia = window.location.origin + '/jogo.html?id=' + dados.familiaId;
+          
+          let tabelaCodigos = '<ul>';
+          dados.codigos.forEach(function(item) {
+            tabelaCodigos += '<li><strong>' + item.nome + ':</strong> ' + item.codigo + '</li>';
+          });
+          tabelaCodigos += '</ul>';
+
+          document.getElementById('resultado').innerHTML = 
+            '<h3>Jogo Criado com Sucesso!</h3>' +
+            '<p><strong>Link da Família:</strong> <a href="' + linkFamilia + '" target="_blank">' + linkFamilia + '</a></p>' +
+            '<h4>Códigos de Acesso Individuais:</h4>' +
+            tabelaCodigos +
+            '<p><small>(Guarde esses códigos para enviar a cada parente!)</small></p>';
+        } else {
+          alert(dados.erro || 'Erro ao criar o jogo.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Erro ao conectar com o servidor.');
       }
     }
   </script>
