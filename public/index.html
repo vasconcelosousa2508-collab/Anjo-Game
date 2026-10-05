@@ -2,12 +2,16 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Criar Jogo - Anjo de Natal</title>
+  <title>Anjo - Criar Ambiente</title>
   <style>
     body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; }
     .campo { margin-bottom: 15px; }
-    input, button { padding: 8px; width: 100%; box-sizing: border-box; }
-    button { cursor: pointer; margin-top: 10px; }
+    .item-participante { display: flex; gap: 8px; margin-bottom: 8px; }
+    input, button { padding: 10px; width: 100%; box-sizing: border-box; }
+    button { cursor: pointer; }
+    button.btn-add { background: #1976d2; color: white; border: none; border-radius: 4px; margin-bottom: 15px; }
+    button.btn-remover { background: #d32f2f; color: white; border: none; border-radius: 4px; width: auto; padding: 0 12px; }
+    button.btn-submit { background: #2e7d32; color: white; border: none; border-radius: 4px; font-weight: bold; }
     ul { background: #f4f4f4; padding: 15px 30px; border-radius: 5px; }
   </style>
 </head>
@@ -15,36 +19,78 @@
   <h1>Anjo - Criar Ambiente</h1>
 
   <div class="campo">
-    <label>Nome da Família:</label>
+    <label><strong>Nome da Família:</strong></label>
     <input type="text" id="nomeFamilia" placeholder="Ex: Família Silva">
   </div>
 
   <div class="campo">
-    <label>Participantes (separados por vírgula):</label>
-    <input type="text" id="participantes" placeholder="Ex: Maria, João, Pedro">
+    <label><strong>Participantes:</strong></label>
+    <div id="listaParticipantes" style="margin-top: 10px;">
+      <!-- Primeiros 2 participantes por padrão -->
+      <div class="item-participante">
+        <input type="text" class="input-participante" placeholder="Nome do participante 1">
+      </div>
+      <div class="item-participante">
+        <input type="text" class="input-participante" placeholder="Nome do participante 2">
+      </div>
+    </div>
+    
+    <button type="button" class="btn-add" onclick="adicionarCampoParticipante()">+ Adicionar Participante</button>
   </div>
 
-  <button onclick="criarAmbiente()">Criar jogo</button>
+  <button class="btn-submit" onclick="criarAmbiente()">Criar Jogo e Gerar Códigos</button>
 
   <div id="resultado" style="margin-top: 20px;"></div>
 
   <script>
+    // novo input p participante
+    function adicionarCampoParticipante() {
+      const container = document.getElementById('listaParticipantes');
+      const totalCampos = container.getElementsByClassName('item-participante').length + 1;
+
+      const div = document.createElement('div');
+      div.className = 'item-participante';
+      div.innerHTML = 
+        '<input type="text" class="input-participante" placeholder="Nome do participante ' + totalCampos + '">' +
+        '<button type="button" class="btn-remover" onclick="removerCampoParticipante(this)">X</button>';
+
+      container.appendChild(div);
+    }
+
+    // remover campo de participante
+    function removerCampoParticipante(botao) {
+      const divItem = botao.parentElement;
+      divItem.remove();
+    }
+
+    // Função principal que lê todos os inputs e envia para a API
     async function criarAmbiente() {
       const nomeFamilia = document.getElementById('nomeFamilia').value;
-      const textoParticipantes = document.getElementById('participantes').value;
+      const inputs = document.querySelectorAll('.input-participante');
+      
+      const listaParticipantes = [];
+      inputs.forEach(function(input) {
+        const valor = input.value.trim();
+        if (valor) {
+          listaParticipantes.push(valor);
+        }
+      });
 
-      if (!nomeFamilia || !textoParticipantes) {
-        alert('Preencha o nome da família e os participantes!');
+      if (!nomeFamilia) {
+        alert('Por favor, informe o nome da família!');
         return;
       }
 
-      const lista = textoParticipantes.split(',').map(function(n) { return n.trim(); }).filter(function(n) { return n; });
+      if (listaParticipantes.length === 0) {
+        alert('Adicione pelo menos 1 participante!');
+        return;
+      }
 
       try {
         const resposta = await fetch('/api/familias', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nomeFamilia: nomeFamilia, participantes: lista })
+          body: JSON.stringify({ nomeFamilia: nomeFamilia, participantes: listaParticipantes })
         });
 
         const dados = await resposta.json();

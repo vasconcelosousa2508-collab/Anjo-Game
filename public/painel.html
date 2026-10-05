@@ -4,35 +4,95 @@
   <meta charset="UTF-8">
   <title>Anjo - Meu Painel</title>
   <style>
-    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; }
-    .card { background: #f9f9f9; padding: 15px; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; }
-    .header { text-align: center; }
-    button.sair { background: #d32f2f; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; float: right; }
+    body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 10px; }
+    
+    /* Alternância simples de telas */
+    .tela { display: none; }
+    .tela.ativa { display: block; }
+
+    /* Estilo básico dos perfis circulares com moldura */
+    .perfis-container { display: flex; justify-content: space-around; margin: 30px 0; }
+    .perfil-card { text-align: center; cursor: pointer; border: 1px solid #ccc; padding: 20px 15px; border-radius: 8px; width: 160px; }
+    .avatar-circulo {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #333;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      background: #fff;
+    }
+
+    .card { border: 1px solid #ccc; padding: 15px; margin-top: 15px; border-radius: 4px; }
+    textarea { width: 100%; height: 80px; box-sizing: border-box; margin-top: 5px; }
+    button { cursor: pointer; padding: 6px 12px; margin-top: 5px; }
   </style>
 </head>
 <body>
 
-  <button class="sair" onclick="sair()">Sair</button>
-  
-  <div class="header">
-    <h1 id="boasVindas">Carregando...</h1>
-    <p>Ambiente de jogo</p>
+  <!-- TELA 1: MENU PRINCIPAL -->
+  <div id="telaMenu" class="tela ativa">
+    <button onclick="sair()" style="float: right;">Sair</button>
+    <h2>Painel do Jogo</h2>
+    <p>Olá, <span id="nomeJogador">Carregando...</span>!</p>
+
+    <div class="perfis-container">
+      
+      <div class="perfil-card" onclick="navegarPara('telaMeuPerfil')">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=MeuPerfil" class="avatar-circulo" style="border-color: #0066cc;">
+        <p><strong>Meu Perfil</strong></p>
+      </div>
+
+      <div class="perfil-card" onclick="navegarPara('telaProtegido')">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Protegido" class="avatar-circulo" style="border-color: #2e7d32;">
+        <p><strong>Protegido</strong></p>
+      </div>
+
+    </div>
   </div>
 
-  <div class="card">
-    <h3>Seu Amigo Secreto / Protegido</h3>
-    <p id="amigoSecreto">Aguardando realização do sorteio...</p>
+
+  <!-- TELA 2: MEU PERFIL -->
+  <div id="telaMeuPerfil" class="tela">
+    <button onclick="navegarPara('telaMenu')">← Voltar</button>
+    <h2>Meu Perfil</h2>
+
+    <div class="card">
+      <p><strong>Nome:</strong> <span id="perfilNome">...</span></p>
+    </div>
+
+    <div class="card">
+      <h3>Mensagens Recebidas</h3>
+      <p><em>Nenhuma mensagem recebida ainda. (Simulação)</em></p>
+    </div>
   </div>
 
-  <div class="card">
-    <h3>Suas Cartinhas & Presentes</h3>
-    <p><em>(Espaço reservado para envio de mensagens privadas e listas de presentes)</em></p>
+
+  <!-- TELA 3: PROTEGIDO -->
+  <div id="telaProtegido" class="tela">
+    <button onclick="navegarPara('telaMenu')">← Voltar</button>
+    <h2>Seu Protegido</h2>
+
+    <div class="card">
+      <p><strong>Amigo Secreto:</strong> <span id="nomeProtegido">Fulano (Simulado)</span></p>
+    </div>
+
+    <div class="card">
+      <h3>Enviar Mensagem Anônima</h3>
+      <textarea id="msgTexto" placeholder="Escreva sua mensagem...">></textarea>
+      <button onclick="enviarMensagemSimulada()">Enviar</button>
+    </div>
+
+    <div class="card">
+      <h3>Últimas Mensagens Enviadas</h3>
+      <p><em>"Olá! Seu anjo passou por aqui!" (Simulação)</em></p>
+    </div>
   </div>
+
 
 <script>
   const params = new URLSearchParams(window.location.search);
   const participanteId = params.get('id');
-  const familiaId = sessionStorage.getItem('familiaId');
 
   if (!participanteId || sessionStorage.getItem('participanteId') !== participanteId) {
     alert('Sessão inválida! Faça login novamente.');
@@ -41,30 +101,66 @@
     carregarDados();
   }
 
+  function navegarPara(idTela) {
+    const telas = document.querySelectorAll('.tela');
+    telas.forEach(function(tela) {
+      tela.classList.remove('ativa');
+    });
+    document.getElementById(idTela).classList.add('ativa');
+  }
+
   async function carregarDados() {
     try {
       const resposta = await fetch('/api/participantes/' + participanteId);
       const dados = await resposta.json();
 
       if (resposta.ok) {
-        document.getElementById('boasVindas').innerText = 'Olá, ' + dados.nome + '! ✨';
+        // Preenche o nome no menu e na tela do perfil
+        document.getElementById('nomeJogador').innerText = dados.nome;
+
+        if (document.getElementById('perfilNome')) {
+          document.getElementById('perfilNome').innerText = dados.nome || 'Não informado';
+        }
+
+        // Se a API retornar o protegido, atualiza o nome dele
+        if (dados.protegido && document.getElementById('nomeProtegido')) {
+          document.getElementById('nomeProtegido').innerText = dados.protegido.nome || 'Sorteio ainda não realizado';
+        }
       } else {
-        alert('Erro ao carregar dados.');
+        alert('Erro ao carregar seus dados!');
       }
     } catch (err) {
-      console.error(err);
+      console.error('Erro na requisição:', err);
+    }
+  }
+
+  async function enviarMensagemSimulada() {
+    const texto = document.getElementById('msgTexto').value;
+    if (!texto) {
+      alert('Digite uma mensagem!');
+      return;
+    }
+
+    try {
+      const resposta = await fetch('/api/participantes/' + participanteId + '/mensagens', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texto: texto, destinatario: 'protegido' })
+      });
+
+      const dados = await resposta.json();
+      alert(dados.mensagem || 'Mensagem enviada com sucesso!');
+      document.getElementById('msgTexto').value = '';
+    } catch (err) {
+      console.error('Erro ao enviar mensagem:', err);
     }
   }
 
   function sair() {
-    // Guarda o id da familia em uma constante antes de limpar o sessionStorage
     const idFamiliaSalvo = sessionStorage.getItem('familiaId');
-
-    // Limpa os dados de sessão do navegador
     sessionStorage.removeItem('participanteId');
     sessionStorage.removeItem('familiaId');
 
-    // Se houver ID de família, volta pro login dela. Caso contrário, vai pra tela inicial
     if (idFamiliaSalvo) {
       window.location.href = '/jogo.html?id=' + idFamiliaSalvo;
     } else {
@@ -74,3 +170,4 @@
 </script>
 </body>
 </html>
+
