@@ -149,3 +149,111 @@ button {
 .page-painel button {
 	margin-top: 5px;
 }
+
+.arvore-msg-layout {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+}
+
+.arvore-demo {
+	position: relative;
+	flex: 0 0 170px;
+}
+
+.arvore-demo > img {
+	display: block;
+	width: 100%;
+}
+
+.arvore-enfeites {
+	position: absolute;
+	inset: 0;
+}
+
+.enfeite-na-arvore {
+	position: absolute;
+	width: 22px;
+	height: 22px;
+	transform: translate(-50%, -50%);
+}
+
+.enfeite-na-arvore svg {
+	width: 100%;
+	height: 100%;
+}
+
+.mensagens-card {
+	flex: 1;
+	min-width: 0;
+}
+
+.recado-simulado {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 8px 0;
+	padding: 8px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.recado-simulado > span:last-child {
+	font-size: 14px;
+}
+
+.selo-enfeite {
+	display: inline-flex;
+	flex: 0 0 26px;
+	width: 26px;
+	height: 26px;
+	align-items: center;
+	justify-content: center;
+}
+
+.selo-enfeite svg {
+	width: 100%;
+	height: 100%;
+}
+
+.enfeite-bola { color: #b54b42; }
+.enfeite-estrela { color: #c99c32; }
+.enfeite-sino { color: #39745a; }
+.enfeite-presente { color: #536f9c; }
+
+.seletor-enfeite {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 10px 0;
+	padding: 0;
+	border: 0;
+}
+
+.seletor-enfeite legend {
+	margin-bottom: 6px;
+}
+
+.seletor-enfeite label {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	cursor: pointer;
+}
+
+@media (max-width: 600px) {
+	.arvore-msg-layout {
+		flex-direction: column;
+	}
+
+	.arvore-demo {
+		width: 170px;
+		max-width: 100%;
+		align-self: center;
+	}
+
+	.mensagens-card {
+		width: 100%;
+		box-sizing: border-box;
+	}
+}
