@@ -6,7 +6,6 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body class="page-painel">
-
   <!-- TELA 1: MENU PRINCIPAL -->
   <div id="telaMenu" class="tela ativa">
     <button class="btn-sair" onclick="sair()">Sair</button>
@@ -14,62 +13,83 @@
     <p>Olá, <span id="nomeJogador">Carregando...</span>!</p>
 
     <div class="perfis-container">
-      
       <div class="perfil-card" onclick="navegarPara('telaMeuPerfil')">
-        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=MeuPerfil" class="avatar-circulo">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=MeuPerfil" class="avatar-circulo" alt="">
         <p><strong>Meu Perfil</strong></p>
       </div>
-
       <div class="perfil-card" onclick="navegarPara('telaProtegido')">
-        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Protegido" class="avatar-circulo">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Protegido" class="avatar-circulo" alt="">
         <p><strong>Protegido</strong></p>
       </div>
-
     </div>
   </div>
-
 
   <!-- TELA 2: MEU PERFIL -->
   <div id="telaMeuPerfil" class="tela">
-    <button onclick="navegarPara('telaMenu')">← Voltar</button>
+    <button onclick="navegarPara('telaMenu')">Voltar</button>
     <h2>Meu Perfil</h2>
-
     <div class="card">
       <p><strong>Nome:</strong> <span id="perfilNome">...</span></p>
     </div>
-
-    <div class="card">
-      <h3>Mensagens Recebidas</h3>
-      <p><em>Nenhuma mensagem recebida ainda. (Simulação)</em></p>
+    <div class="arvore-msg-layout">
+      <div class="arvore-demo">
+        <img src="/assets/arvore-natal.svg" alt="Árvore de Natal">
+        <div class="arvore-enfeites" id="arvoreRecebidos"></div>
+      </div>
+      <div class="card mensagens-card">
+        <h3>Mensagens Recebidas</h3>
+        <div id="listaRecebidas"></div>
+      </div>
     </div>
   </div>
-
 
   <!-- TELA 3: PROTEGIDO -->
   <div id="telaProtegido" class="tela">
-    <button onclick="navegarPara('telaMenu')">← Voltar</button>
+    <button onclick="navegarPara('telaMenu')">Voltar</button>
     <h2>Seu Protegido</h2>
-
     <div class="card">
       <p><strong>Amigo Secreto:</strong> <span id="nomeProtegido">Fulano (Simulado)</span></p>
     </div>
-
-    <div class="card">
-      <h3>Enviar Mensagem Anônima</h3>
-      <textarea id="msgTexto" placeholder="Escreva sua mensagem...">></textarea>
-      <button onclick="enviarMensagemSimulada()">Enviar</button>
-    </div>
-
-    <div class="card">
-      <h3>Últimas Mensagens Enviadas</h3>
-      <p><em>"Olá! Seu anjo passou por aqui!" (Simulação)</em></p>
+    <div class="arvore-msg-layout">
+      <div class="arvore-demo">
+        <img src="/assets/arvore-natal.svg" alt="Árvore de Natal do seu protegido">
+        <div class="arvore-enfeites" id="arvoreEnviados"></div>
+      </div>
+      <div class="mensagens-card">
+        <div class="card">
+          <h3>Enviar Mensagem Anônima</h3>
+          <form id="formRecado">
+            <textarea id="msgTexto" placeholder="Escreva sua mensagem..." required></textarea>
+            <fieldset class="seletor-enfeite">
+              <legend>Escolha um enfeite</legend>
+              <label><input type="radio" name="enfeite" value="bola" checked><span class="selo-enfeite enfeite-bola"><svg aria-hidden="true"><use href="/assets/enfeites.svg#bola"></use></svg></span> Bola</label>
+              <label><input type="radio" name="enfeite" value="estrela"><span class="selo-enfeite enfeite-estrela"><svg aria-hidden="true"><use href="/assets/enfeites.svg#estrela"></use></svg></span> Estrela</label>
+              <label><input type="radio" name="enfeite" value="sino"><span class="selo-enfeite enfeite-sino"><svg aria-hidden="true"><use href="/assets/enfeites.svg#sino"></use></svg></span> Sino</label>
+              <label><input type="radio" name="enfeite" value="presente"><span class="selo-enfeite enfeite-presente"><svg aria-hidden="true"><use href="/assets/enfeites.svg#presente"></use></svg></span> Presente</label>
+            </fieldset>
+            <button type="submit">Enviar</button>
+            <p id="statusRecado" role="status"></p>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Últimas Mensagens Enviadas</h3>
+          <div id="listaEnviadas"></div>
+        </div>
+      </div>
     </div>
   </div>
-
 
 <script>
   const params = new URLSearchParams(window.location.search);
   const participanteId = params.get('id');
+  const mensagensRecebidas = [
+    { texto: 'Seu cuidado deixa tudo mais bonito. Feliz Natal!', enfeite: 'estrela' },
+    { texto: 'Que nunca faltem motivos para sorrir por aí.', enfeite: 'sino' }
+  ];
+  const mensagensEnviadas = [
+    { texto: 'Passei para deixar um abraço e um pouco de magia.', enfeite: 'bola' }
+  ];
+  const posicoesEnfeites = [[32, 43], [65, 52], [44, 65], [66, 72], [35, 77], [52, 37]];
 
   if (!participanteId || sessionStorage.getItem('participanteId') !== participanteId) {
     alert('Sessão inválida! Faça login novamente.');
@@ -78,9 +98,12 @@
     carregarDados();
   }
 
+  document.getElementById('formRecado').addEventListener('submit', enviarMensagemSimulada);
+  renderizarMensagens(mensagensRecebidas, 'listaRecebidas', 'arvoreRecebidos', 'Seu anjo');
+  renderizarMensagens(mensagensEnviadas, 'listaEnviadas', 'arvoreEnviados', 'Você');
+
   function navegarPara(idTela) {
-    const telas = document.querySelectorAll('.tela');
-    telas.forEach(function(tela) {
+    document.querySelectorAll('.tela').forEach(function(tela) {
       tela.classList.remove('ativa');
     });
     document.getElementById(idTela).classList.add('ativa');
@@ -90,59 +113,76 @@
     try {
       const resposta = await fetch('/api/participantes/' + participanteId);
       const dados = await resposta.json();
-
       if (resposta.ok) {
-        // Preenche o nome no menu e na tela do perfil
-        document.getElementById('nomeJogador').innerText = dados.nome;
+        document.getElementById('nomeJogador').textContent = dados.nome;
+        document.getElementById('perfilNome').textContent = dados.nome || 'Não informado';
+      }
 
-        if (document.getElementById('perfilNome')) {
-          document.getElementById('perfilNome').innerText = dados.nome || 'Não informado';
-        }
-
-        // Se a API retornar o protegido, atualiza o nome dele
-        if (dados.protegido && document.getElementById('nomeProtegido')) {
-          document.getElementById('nomeProtegido').innerText = dados.protegido.nome || 'Sorteio ainda não realizado';
-        }
-      } else {
-        alert('Erro ao carregar seus dados!');
+      const respostaProtegido = await fetch('/api/participantes/' + participanteId + '/protegido');
+      const protegido = await respostaProtegido.json();
+      if (respostaProtegido.ok && protegido.nome) {
+        document.getElementById('nomeProtegido').textContent = protegido.nome;
       }
     } catch (err) {
-      console.error('Erro na requisição:', err);
+      console.error('Erro ao carregar dados:', err);
     }
   }
 
-  async function enviarMensagemSimulada() {
-    const texto = document.getElementById('msgTexto').value;
-    if (!texto) {
-      alert('Digite uma mensagem!');
-      return;
-    }
+  function criarIconeEnfeite(tipo) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    svg.setAttribute('viewBox', '0 0 40 40');
+    use.setAttribute('href', '/assets/enfeites.svg#' + tipo);
+    svg.appendChild(use);
+    return svg;
+  }
 
-    try {
-      const resposta = await fetch('/api/participantes/' + participanteId + '/mensagens', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ texto: texto, destinatario: 'protegido' })
-      });
+  function renderizarMensagens(mensagens, listaId, arvoreId, autor) {
+    const lista = document.getElementById(listaId);
+    const arvore = document.getElementById(arvoreId);
+    lista.replaceChildren();
+    arvore.replaceChildren();
 
-      const dados = await resposta.json();
-      alert(dados.mensagem || 'Mensagem enviada com sucesso!');
-      document.getElementById('msgTexto').value = '';
-    } catch (err) {
-      console.error('Erro ao enviar mensagem:', err);
-    }
+    mensagens.forEach(function(mensagem, indice) {
+      const tipo = mensagem.enfeite || 'bola';
+      const recado = document.createElement('div');
+      recado.className = 'recado-simulado';
+      const selo = document.createElement('span');
+      selo.className = 'selo-enfeite enfeite-' + tipo;
+      selo.appendChild(criarIconeEnfeite(tipo));
+      const texto = document.createElement('span');
+      texto.textContent = mensagem.texto;
+      recado.append(selo, texto);
+      lista.appendChild(recado);
+
+      const posicao = posicoesEnfeites[indice % posicoesEnfeites.length];
+      const enfeite = document.createElement('span');
+      enfeite.className = 'enfeite-na-arvore enfeite-' + tipo;
+      enfeite.style.left = posicao[0] + '%';
+      enfeite.style.top = posicao[1] + '%';
+      enfeite.setAttribute('aria-label', autor + ' deixou ' + tipo);
+      enfeite.appendChild(criarIconeEnfeite(tipo));
+      arvore.appendChild(enfeite);
+    });
+  }
+
+  function enviarMensagemSimulada(evento) {
+    evento.preventDefault();
+    const texto = document.getElementById('msgTexto').value.trim();
+    if (!texto) return;
+
+    const enfeite = document.querySelector('input[name="enfeite"]:checked').value;
+    mensagensEnviadas.unshift({ texto: texto, enfeite: enfeite });
+    renderizarMensagens(mensagensEnviadas, 'listaEnviadas', 'arvoreEnviados', 'Você');
+    document.getElementById('formRecado').reset();
+    document.getElementById('statusRecado').textContent = 'Mensagem e enfeite adicionados (simulação).';
   }
 
   function sair() {
     const idFamiliaSalvo = sessionStorage.getItem('familiaId');
     sessionStorage.removeItem('participanteId');
     sessionStorage.removeItem('familiaId');
-
-    if (idFamiliaSalvo) {
-      window.location.href = '/jogo.html?id=' + idFamiliaSalvo;
-    } else {
-      window.location.href = '/';
-    }
+    window.location.href = idFamiliaSalvo ? '/jogo.html?id=' + idFamiliaSalvo : '/';
   }
 </script>
 </body>

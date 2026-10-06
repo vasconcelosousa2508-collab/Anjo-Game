@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="bola" viewBox="0 0 40 40">
+    <path d="M17 7h6v5h-6z" fill="#D6A83D"/>
+    <circle cx="20" cy="23" r="12" fill="currentColor"/>
+    <ellipse cx="16" cy="18" rx="3" ry="4" fill="#fff" opacity=".38"/>
+  </symbol>
+  <symbol id="estrela" viewBox="0 0 40 40">
+    <path d="m20 4 4.8 10 11 .9-8.3 7.3 2.5 10.8L20 27.3l-10 5.7 2.5-10.8-8.3-7.3 11-.9L20 4Z" fill="currentColor" stroke="#A87B24" stroke-width="1.2" stroke-linejoin="round"/>
+    <circle cx="17" cy="16" r="1.6" fill="#fff" opacity=".65"/>
+  </symbol>
+  <symbol id="sino" viewBox="0 0 40 40">
+    <path d="M16 8a4 4 0 0 1 8 0v2h-8V8Z" fill="#D6A83D"/>
+    <path d="M11 29c2-2 3-5 3-10a6 6 0 0 1 12 0c0 5 1 8 3 10l-2 2H13l-2-2Z" fill="currentColor"/>
+    <path d="M17 33a3 3 0 0 0 6 0h-6Z" fill="#D6A83D"/>
+    <path d="M17 17c-1 3-1 6-1 8" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+  </symbol>
+  <symbol id="presente" viewBox="0 0 40 40">
+    <path d="M8 17h24v18H8z" fill="currentColor"/>
+    <path d="M6 13h28v7H6z" fill="#D6A83D"/>
+    <path d="M18 13h4v22h-4z" fill="#D6A83D"/>
+    <path d="M20 13c-8 0-11-2-10-6 1-4 8-2 10 6Zm0 0c8 0 11-2 10-6-1-4-8-2-10 6Z" fill="none" stroke="#D6A83D" stroke-width="2.5"/>
+    <path d="M12 24h5" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+  </symbol>
+</svg>
