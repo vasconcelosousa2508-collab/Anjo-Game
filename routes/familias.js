@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../firebaseConfig'); // Note o '../' para voltar uma pasta e achar o firebaseConfig
+const db = require('../firebaseConfig'); //  '../' para voltar uma pasta e achar o firebaseConfig
 
 // Função auxiliar para gerar código simples
 function gerarCodigo() {
