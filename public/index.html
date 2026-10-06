@@ -3,19 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Anjo - Criar Ambiente</title>
-  <style>
-    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; }
-    .campo { margin-bottom: 15px; }
-    .item-participante { display: flex; gap: 8px; margin-bottom: 8px; }
-    input, button { padding: 10px; width: 100%; box-sizing: border-box; }
-    button { cursor: pointer; }
-    button.btn-add { background: #1976d2; color: white; border: none; border-radius: 4px; margin-bottom: 15px; }
-    button.btn-remover { background: #d32f2f; color: white; border: none; border-radius: 4px; width: auto; padding: 0 12px; }
-    button.btn-submit { background: #2e7d32; color: white; border: none; border-radius: 4px; font-weight: bold; }
-    ul { background: #f4f4f4; padding: 15px 30px; border-radius: 5px; }
-  </style>
+  <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body class="page-criar">
   <h1>Anjo - Criar Ambiente</h1>
 
   <div class="campo">
@@ -25,7 +15,7 @@
 
   <div class="campo">
     <label><strong>Participantes:</strong></label>
-    <div id="listaParticipantes" style="margin-top: 10px;">
+    <div id="listaParticipantes">
       <!-- Primeiros 2 participantes por padrão -->
       <div class="item-participante">
         <input type="text" class="input-participante" placeholder="Nome do participante 1">
@@ -40,7 +30,7 @@
 
   <button class="btn-submit" onclick="criarAmbiente()">Criar Jogo e Gerar Códigos</button>
 
-  <div id="resultado" style="margin-top: 20px;"></div>
+  <div id="resultado"></div>
 
   <script>
     // novo input p participante
