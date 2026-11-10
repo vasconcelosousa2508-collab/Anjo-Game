@@ -1,16 +1,20 @@
+// dependencias
 const express = require('express');
-const cors = require('cors');
+const cors = require('cors'); // permissão de acesso
 
+// rotas
 const familiasRoutes = require('./routes/familias');
-const participantesRoutes = require('./routes/participantes'); // <-- ADICIONE ESTA LINHA
+const participantesRoutes = require('./routes/participantes'); 
 
-const app = express();
+// configurações do servidor
+const app = express(); // cria
 
-app.use(express.json());
-app.use(cors());
-app.use(express.static('public'));
+app.use(express.json()); // prepara p recepção de dados JSON
+app.use(cors()); // habilita permisoes de acessos externos
+app.use(express.static('public')); // os arquivos na pasta public são visiveis ao navegador
 
-app.use('/api/familias', familiasRoutes);
+// ativa rotas
+app.use('/api/familias', familiasRoutes); 
 app.use('/api/participantes', participantesRoutes); // <-- ADICIONE ESTA LINHA
 
 const PORT = 3000;

@@ -110,23 +110,36 @@
   }
 
   async function carregarDados() {
-    try {
-      const resposta = await fetch('/api/participantes/' + participanteId);
-      const dados = await resposta.json();
-      if (resposta.ok) {
-        document.getElementById('nomeJogador').textContent = dados.nome;
-        document.getElementById('perfilNome').textContent = dados.nome || 'Não informado';
-      }
-
-      const respostaProtegido = await fetch('/api/participantes/' + participanteId + '/protegido');
-      const protegido = await respostaProtegido.json();
-      if (respostaProtegido.ok && protegido.nome) {
-        document.getElementById('nomeProtegido').textContent = protegido.nome;
-      }
-    } catch (err) {
-      console.error('Erro ao carregar dados:', err);
+  try {
+    // 1. Carrega os dados do participante logado
+    const resposta = await fetch('/api/participantes/' + participanteId);
+    const dados = await resposta.json();
+    
+    if (resposta.ok) {
+      document.getElementById('nomeJogador').textContent = dados.nome;
+      document.getElementById('perfilNome').textContent = dados.nome || 'Não informado';
+    } else {
+      alert(dados.erro || 'Erro ao carregar seu perfil.');
+      return;
     }
+
+    // 2. Carrega quem é o Protegido (Sorteado)
+    const respostaProtegido = await fetch('/api/participantes/' + participanteId + '/protegido');
+    const protegido = await respostaProtegido.json();
+
+    if (respostaProtegido.ok && protegido.nome) {
+      // Atualiza o texto na tela com o nome REAL vindo do Firebase
+      document.getElementById('nomeProtegido').textContent = protegido.nome;
+    } else {
+      // Exibe a mensagem de erro do backend caso o sorteio não tenha ocorrido
+      document.getElementById('nomeProtegido').textContent = protegido.erro || 'Sorteio ainda não realizado';
+    }
+
+  } catch (err) {
+    console.error('Erro ao carregar dados:', err);
+    document.getElementById('nomeProtegido').textContent = 'Erro ao carregar protegido';
   }
+}
 
   function criarIconeEnfeite(tipo) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');

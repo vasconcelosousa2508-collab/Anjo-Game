@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../firebaseConfig');
 
-// 1. GET: Perfil do participante
+// GET: Perfil do participante
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -23,38 +23,59 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// 2. GET: Informações do Protegido (Amigo Secreto tirado)
+// GET: Informações do Protegido vindo do Banco
 router.get('/:id/protegido', async (req, res) => {
-  // Rota declarada para entrega - Retorna dados simulados do protegido
-  res.json({
-    protegidoId: 'prot_123',
-    nome: 'Clara (Simulado)',
-    desejos: ['Livro de Fantasia', 'Caneca do Harry Potter'],
-    statusSorteio: 'Sorteio Realizado'
-  });
+  try {
+    const { id } = req.params;
+    
+    // Busca participante logado
+    const docAnjo = await db.collection('participantes').doc(id).get();
+
+    if (!docAnjo.exists) {
+      return res.status(404).json({ erro: 'Participante não encontrado.' });
+    }
+
+    const dadosAnjo = docAnjo.data();
+
+    if (!dadosAnjo.protegidoId) {
+      return res.status(400).json({ erro: 'Sorteio ainda não realizado para este jogador.' });
+    }
+
+    // Busca protegido usando o ID armazenado no sorteio
+    const docProtegido = await db.collection('participantes').doc(dadosAnjo.protegidoId).get();
+
+    if (!docProtegido.exists) {
+      return res.status(404).json({ erro: 'Protegido não encontrado.' });
+    }
+
+    const dadosProtegido = docProtegido.data();
+
+    res.json({
+      protegidoId: docProtegido.id,
+      nome: dadosProtegido.nome
+    });
+
+  } catch (error) {
+    console.error('Erro ao buscar protegido:', error);
+    res.status(500).json({ erro: 'Erro ao buscar seu protegido.' });
+  }
 });
 
-// 3. GET: Mensagens trocadas (Enviadas e Recebidas)
+// GET: Mensagens trocadas (Simulado)
 router.get('/:id/mensagens', async (req, res) => {
-  // Rota declarada para entrega - Retorna mensagens simuladas
   res.json({
-    enviadas: [
-      { id: 'm1', texto: 'Olá, seu anjo passou por aqui!', data: '2026-10-05T14:00:00Z' }
-    ],
-    recebidas: [
-      { id: 'm2', texto: 'Obrigado anjo! Adorei a dica!', data: '2026-10-05T15:30:00Z' }
-    ]
+    enviadas: [],
+    recebidas: []
   });
 });
 
-// 4. POST: Enviar nova mensagem para o protegido/anjo
+// POST: Enviar nova mensagem
 router.post('/:id/mensagens', async (req, res) => {
   const { texto, destinatario } = req.body;
   if (!texto) {
     return res.status(400).json({ erro: 'Texto da mensagem é obrigatório.' });
   }
 
-  // Resposta mock confirmando a estrutura da rota
   res.status(201).json({
     mensagem: 'Mensagem enviada com sucesso! (Estrutura de Rota)',
     detalhes: { texto, destinatario, data: new Date() }
