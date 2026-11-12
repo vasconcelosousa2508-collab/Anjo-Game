@@ -1,3 +1,4 @@
+/* GERAL */
 body {
 	font-family: sans-serif;
 }
@@ -256,4 +257,37 @@ button {
 		width: 100%;
 		box-sizing: border-box;
 	}
+}
+
+/* ENFEITES
+/* Tamanho do ícone no seletor de escolha e na lista de recados */
+.selo-enfeite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+}
+
+.selo-enfeite img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Tamanho e centralização do enfeite pendurado na árvore */
+.enfeite-na-arvore {
+  position: absolute;
+  width: 28px;   /* Ajuste aqui se quiser maior ou menor (ex: 24px ou 32px) */
+  height: 28px;
+  transform: translate(-50%, -50%); /* Centraliza exatamente no ponto [x, y] */
+  pointer-events: auto;
+}
+
+.enfeite-na-arvore img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }

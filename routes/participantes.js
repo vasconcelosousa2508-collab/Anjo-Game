@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../firebaseConfig');
 
-// GET: Perfil do participante
+const CAPACIDADE_ARVORE = 12; // Máximo de enfeites por árvore
+
+// 1. GET: Perfil do participante
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -23,12 +25,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// GET: Informações do Protegido vindo do Banco
+// 2. GET: Informações do Protegido vindo do Banco
 router.get('/:id/protegido', async (req, res) => {
   try {
     const { id } = req.params;
-    
-    // Busca participante logado
     const docAnjo = await db.collection('participantes').doc(id).get();
 
     if (!docAnjo.exists) {
@@ -41,7 +41,6 @@ router.get('/:id/protegido', async (req, res) => {
       return res.status(400).json({ erro: 'Sorteio ainda não realizado para este jogador.' });
     }
 
-    // Busca protegido usando o ID armazenado no sorteio
     const docProtegido = await db.collection('participantes').doc(dadosAnjo.protegidoId).get();
 
     if (!docProtegido.exists) {
@@ -61,25 +60,102 @@ router.get('/:id/protegido', async (req, res) => {
   }
 });
 
-// GET: Mensagens trocadas (Simulado)
+// 3. GET: Buscar Mensagens Reais (Enviadas e Recebidas)
 router.get('/:id/mensagens', async (req, res) => {
-  res.json({
-    enviadas: [],
-    recebidas: []
-  });
+  try {
+    const { id } = req.params;
+
+    // Busca mensagens que EU enviei para o meu protegido
+    const snapEnviadas = await db.collection('mensagens')
+      .where('remetenteId', '==', id)
+      .get();
+
+    // Busca mensagens que EU recebi do meu anjo
+    const snapRecebidas = await db.collection('mensagens')
+      .where('destinatarioId', '==', id)
+      .get();
+
+    const formatarDoc = (doc) => {
+      const d = doc.data();
+      return {
+        id: doc.id,
+        texto: d.texto,
+        enfeite: d.enfeite,
+        posicao: d.posicao ?? 0,
+        arvoreNumero: d.arvoreNumero ?? 1,
+        lida: d.lida ?? false,
+        criadoEm: d.criadoEm ? d.criadoEm.toMillis() : 0
+      };
+    };
+
+    // Ordena da mais antiga para a mais nova para manter a ordem dos slots
+    const enviadas = snapEnviadas.docs.map(formatarDoc).sort((a, b) => a.criadoEm - b.criadoEm);
+    const recebidas = snapRecebidas.docs.map(formatarDoc).sort((a, b) => a.criadoEm - b.criadoEm);
+
+    res.json({ enviadas, recebidas });
+
+  } catch (error) {
+    console.error('Erro ao buscar mensagens:', error);
+    res.status(500).json({ erro: 'Erro ao carregar mensagens.' });
+  }
 });
 
-// POST: Enviar nova mensagem
+// 4. POST: Salvar Nova Mensagem e Enfeite no Firestore
 router.post('/:id/mensagens', async (req, res) => {
-  const { texto, destinatario } = req.body;
-  if (!texto) {
-    return res.status(400).json({ erro: 'Texto da mensagem é obrigatório.' });
-  }
+  try {
+    const { id } = req.params; // ID do remetente (Anjo)
+    const { texto, enfeite } = req.body;
 
-  res.status(201).json({
-    mensagem: 'Mensagem enviada com sucesso! (Estrutura de Rota)',
-    detalhes: { texto, destinatario, data: new Date() }
-  });
+    if (!texto || !String(texto).trim()) {
+      return res.status(400).json({ erro: 'O texto da mensagem é obrigatório.' });
+    }
+
+    // Descobre automaticamente quem é o protegido deste remetente
+    const docAnjo = await db.collection('participantes').doc(id).get();
+    if (!docAnjo.exists) {
+      return res.status(404).json({ erro: 'Remetente não encontrado.' });
+    }
+
+    const dadosAnjo = docAnjo.data();
+    const destinatarioId = dadosAnjo.protegidoId;
+
+    if (!destinatarioId) {
+      return res.status(400).json({ erro: 'Você ainda não possui um protegido sorteado.' });
+    }
+
+    // Conta quantas mensagens o destinatário já tem para calcular a vaga fixa e a árvore
+    const snapExistentes = await db.collection('mensagens')
+      .where('destinatarioId', '==', destinatarioId)
+      .get();
+
+    const totalExistentes = snapExistentes.size;
+    const posicao = totalExistentes % CAPACIDADE_ARVORE;
+    const arvoreNumero = Math.floor(totalExistentes / CAPACIDADE_ARVORE) + 1;
+
+    const novaMensagem = {
+      familiaId: dadosAnjo.familiaId,
+      remetenteId: id,
+      destinatarioId: destinatarioId,
+      texto: String(texto).trim(),
+      enfeite: enfeite || 'bola',
+      posicao: posicao,
+      arvoreNumero: arvoreNumero,
+      lida: false,
+      criadoEm: new Date()
+    };
+
+    const docRef = await db.collection('mensagens').add(novaMensagem);
+
+    res.status(201).json({
+      id: docRef.id,
+      ...novaMensagem,
+      criadoEm: novaMensagem.criadoEm.getTime()
+    });
+
+  } catch (error) {
+    console.error('Erro ao salvar mensagem:', error);
+    res.status(500).json({ erro: 'Erro ao enviar mensagem.' });
+  }
 });
 
 module.exports = router;
