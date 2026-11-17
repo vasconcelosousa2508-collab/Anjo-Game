@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../firebaseConfig');
 
-const CAPACIDADE_ARVORE = 12; // Máximo de enfeites por árvore
+const CAPACIDADE_ARVORE = 14; // Máximo de enfeites por árvore
 
 // 1. GET: Perfil do participante
 router.get('/:id', async (req, res) => {
@@ -65,12 +65,10 @@ router.get('/:id/mensagens', async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Busca mensagens que EU enviei para o meu protegido
     const snapEnviadas = await db.collection('mensagens')
       .where('remetenteId', '==', id)
       .get();
 
-    // Busca mensagens que EU recebi do meu anjo
     const snapRecebidas = await db.collection('mensagens')
       .where('destinatarioId', '==', id)
       .get();
@@ -88,7 +86,6 @@ router.get('/:id/mensagens', async (req, res) => {
       };
     };
 
-    // Ordena da mais antiga para a mais nova para manter a ordem dos slots
     const enviadas = snapEnviadas.docs.map(formatarDoc).sort((a, b) => a.criadoEm - b.criadoEm);
     const recebidas = snapRecebidas.docs.map(formatarDoc).sort((a, b) => a.criadoEm - b.criadoEm);
 
@@ -103,14 +100,13 @@ router.get('/:id/mensagens', async (req, res) => {
 // 4. POST: Salvar Nova Mensagem e Enfeite no Firestore
 router.post('/:id/mensagens', async (req, res) => {
   try {
-    const { id } = req.params; // ID do remetente (Anjo)
+    const { id } = req.params;
     const { texto, enfeite } = req.body;
 
     if (!texto || !String(texto).trim()) {
       return res.status(400).json({ erro: 'O texto da mensagem é obrigatório.' });
     }
 
-    // Descobre automaticamente quem é o protegido deste remetente
     const docAnjo = await db.collection('participantes').doc(id).get();
     if (!docAnjo.exists) {
       return res.status(404).json({ erro: 'Remetente não encontrado.' });
@@ -123,7 +119,6 @@ router.post('/:id/mensagens', async (req, res) => {
       return res.status(400).json({ erro: 'Você ainda não possui um protegido sorteado.' });
     }
 
-    // Conta quantas mensagens o destinatário já tem para calcular a vaga fixa e a árvore
     const snapExistentes = await db.collection('mensagens')
       .where('destinatarioId', '==', destinatarioId)
       .get();
@@ -137,7 +132,7 @@ router.post('/:id/mensagens', async (req, res) => {
       remetenteId: id,
       destinatarioId: destinatarioId,
       texto: String(texto).trim(),
-      enfeite: enfeite || 'bola',
+      enfeite: enfeite || 'bola-vermelha',
       posicao: posicao,
       arvoreNumero: arvoreNumero,
       lida: false,

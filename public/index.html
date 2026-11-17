@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <title>Anjo - Criar Ambiente</title>
   <link rel="stylesheet" href="/style.css">
+  <!-- Bibliotecas para gerar o PDF diretamente no navegador -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body class="page-criar">
   <h1>Anjo - Criar Ambiente</h1>
@@ -16,7 +19,6 @@
   <div class="campo">
     <label><strong>Participantes:</strong></label>
     <div id="listaParticipantes">
-      <!-- Primeiros 2 participantes por padrão -->
       <div class="item-participante">
         <input type="text" class="input-participante" placeholder="Nome do participante 1">
       </div>
@@ -33,7 +35,8 @@
   <div id="resultado"></div>
 
   <script>
-    // novo input p participante
+    let dadosUltimoJogo = null;
+
     function adicionarCampoParticipante() {
       const container = document.getElementById('listaParticipantes');
       const totalCampos = container.getElementsByClassName('item-participante').length + 1;
@@ -47,23 +50,18 @@
       container.appendChild(div);
     }
 
-    // remover campo de participante
     function removerCampoParticipante(botao) {
-      const divItem = botao.parentElement;
-      divItem.remove();
+      botao.parentElement.remove();
     }
 
-    // Função principal que lê todos os inputs e envia para a API
     async function criarAmbiente() {
-      const nomeFamilia = document.getElementById('nomeFamilia').value;
+      const nomeFamilia = document.getElementById('nomeFamilia').value.trim();
       const inputs = document.querySelectorAll('.input-participante');
       
       const listaParticipantes = [];
       inputs.forEach(function(input) {
         const valor = input.value.trim();
-        if (valor) {
-          listaParticipantes.push(valor);
-        }
+        if (valor) listaParticipantes.push(valor);
       });
 
       if (!nomeFamilia) {
@@ -71,8 +69,8 @@
         return;
       }
 
-      if (listaParticipantes.length === 0) {
-        alert('Adicione pelo menos 1 participante!');
+      if (listaParticipantes.length < 2) {
+        alert('Adicione pelo menos 2 participantes!');
         return;
       }
 
@@ -88,6 +86,13 @@
         if (resposta.ok) {
           const linkFamilia = window.location.origin + '/jogo.html?id=' + dados.familiaId;
           
+          // Guarda os dados para gerar o PDF quando o usuário clicar no botão
+          dadosUltimoJogo = {
+            nomeFamilia: nomeFamilia,
+            linkFamilia: linkFamilia,
+            codigos: dados.codigos
+          };
+
           let tabelaCodigos = '<ul>';
           dados.codigos.forEach(function(item) {
             tabelaCodigos += '<li><strong>' + item.nome + ':</strong> ' + item.codigo + '</li>';
@@ -99,7 +104,8 @@
             '<p><strong>Link da Família:</strong> <a href="' + linkFamilia + '" target="_blank">' + linkFamilia + '</a></p>' +
             '<h4>Códigos de Acesso Individuais:</h4>' +
             tabelaCodigos +
-            '<p><small>(Guarde esses códigos para enviar a cada parente!)</small></p>';
+            '<button type="button" class="btn-pdf" onclick="baixarPDFCodigos()">Baixar PDF com Códigos e Link</button>' +
+            '<p><small>(Guarde esse PDF ou envie os códigos individualmente para cada parente!)</small></p>';
         } else {
           alert(dados.erro || 'Erro ao criar o jogo.');
         }
@@ -107,6 +113,48 @@
         console.error(err);
         alert('Erro ao conectar com o servidor.');
       }
+    }
+
+    function baixarPDFCodigos() {
+      if (!dadosUltimoJogo) return;
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Título
+      doc.setFontSize(18);
+      doc.setTextColor(46, 125, 50);
+      doc.text('Anjo - Amigo Secreto', 14, 22);
+
+      // Subtítulo com Nome da Família e Link
+      doc.setFontSize(12);
+      doc.setTextColor(40, 40, 40);
+      doc.text('Grupo: ' + dadosUltimoJogo.nomeFamilia, 14, 32);
+
+      doc.setFontSize(10);
+      doc.setTextColor(25, 118, 210);
+      doc.text('Link de acesso: ' + dadosUltimoJogo.linkFamilia, 14, 39);
+
+      // Tabela com Participantes e Códigos
+      const linhasTabela = dadosUltimoJogo.codigos.map(function(item) {
+        return [item.nome, item.codigo];
+      });
+
+      doc.autoTable({
+        startY: 46,
+        head: [['Participante', 'Código Único de Acesso']],
+        body: linhasTabela,
+        theme: 'grid',
+        headStyles: { fillColor: [46, 125, 50], textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 11, cellPadding: 5 },
+        columnStyles: {
+          1: { fontStyle: 'bold' }
+        }
+      });
+
+      // Nome limpo para o arquivo
+      const nomeArquivo = 'codigos-' + dadosUltimoJogo.nomeFamilia.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.pdf';
+      doc.save(nomeArquivo);
     }
   </script>
 </body>

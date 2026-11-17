@@ -32,9 +32,12 @@
       <p><strong>Nome:</strong> <span id="perfilNome">...</span></p>
     </div>
     <div class="arvore-msg-layout">
-      <div class="arvore-demo">
-        <img src="/assets/arvore-natal.svg" alt="Árvore de Natal">
-        <div class="arvore-enfeites" id="arvoreRecebidos"></div>
+      <div class="arvore-coluna">
+        <div id="paginacaoRecebidos" class="paginacao-arvores"></div>
+        <div class="arvore-demo">
+          <img src="/assets/arvore-natal.svg" alt="Árvore de Natal">
+          <div class="arvore-enfeites" id="arvoreRecebidos"></div>
+        </div>
       </div>
       <div class="card mensagens-card">
         <h3>Mensagens Recebidas</h3>
@@ -51,9 +54,12 @@
       <p><strong>Amigo Secreto:</strong> <span id="nomeProtegido">Carregando...</span></p>
     </div>
     <div class="arvore-msg-layout">
-      <div class="arvore-demo">
-        <img src="/assets/arvore-natal.svg" alt="Árvore de Natal do seu protegido">
-        <div class="arvore-enfeites" id="arvoreEnviados"></div>
+      <div class="arvore-coluna">
+        <div id="paginacaoEnviados" class="paginacao-arvores"></div>
+        <div class="arvore-demo">
+          <img src="/assets/arvore-natal.svg" alt="Árvore de Natal do seu protegido">
+          <div class="arvore-enfeites" id="arvoreEnviados"></div>
+        </div>
       </div>
       <div class="mensagens-card">
         <div class="card">
@@ -62,7 +68,6 @@
             <textarea id="msgTexto" placeholder="Escreva sua mensagem..." required></textarea>
             <fieldset class="seletor-enfeite" id="containerSeletorEnfeite">
               <legend>Escolha um enfeite</legend>
-              <!-- Gerado dinamicamente pelo catálogo -->
             </fieldset>
             <button type="submit">Enviar</button>
             <p id="statusRecado" role="status"></p>
@@ -80,7 +85,6 @@
   const params = new URLSearchParams(window.location.search);
   const participanteId = params.get('id');
 
-  // Catálogo dinâmico: adicione novos IDs do seu enfeites.svg aqui no futuro
   const CATALOGO_ENFEITES = [
     { id: 'bola-amarela', nome: 'bola amarela' },
     { id: 'bola-azul', nome: 'bola azul' },
@@ -91,24 +95,30 @@
     { id: 'floco', nome: 'floco' }
   ];
 
-  // 12 vagas fixas (em %) na árvore
+ 
+// 14 vagas [x%, y%] ancoradas pela ARGOLA (translate -50%, -12%):
+  // A argola crava no galho e a bola pende para baixo, com pontas vazando nas bordas inferiores
   const POSICOES_ENFEITES = [
-    [36, 48], // Vaga 0: Meio-esquerda
-    [64, 72], // Vaga 1: Base-direita
-    [50, 24], // Vaga 2: Topo
-    [28, 74], // Vaga 3: Base-esquerda
-    [62, 45], // Vaga 4: Meio-direita
-    [46, 63], // Vaga 5: Centro-baixo
-    [41, 35], // Vaga 6: Alto-esquerda
-    [72, 60], // Vaga 7: Lateral-direita
-    [26, 60], // Vaga 8: Lateral-esquerda
-    [58, 34], // Vaga 9: Alto-direita
-    [49, 46], // Vaga 10: Centro
-    [47, 77]  // Vaga 11: Base-centro
+    [21, 63], // Vaga 0: Meio-Inferior - ponta esquerda (bola pende vazando abaixo da curva)
+    [88, 80], // Vaga 1: Base - ponta extrema direita (bola pende vazando na borda)
+    [45, 22], // Vaga 2: Topo - meio-esquerda
+    [12, 80], // Vaga 3: Base - ponta extrema esquerda (bola pende vazando na borda)
+    [76, 45], // Vaga 4: Meio-Superior - ponta direita (vazando na curva inferior)
+    [54, 59], // Vaga 5: Meio-Inferior - miolo direita
+    [24, 44], // Vaga 6: Meio-Superior - ponta esquerda (vazando na curva inferior)
+    [82, 62], // Vaga 7: Meio-Inferior - ponta direita (vazando na curva inferior)
+    [32, 77], // Vaga 8: Base - miolo esquerda
+    [58, 25], // Vaga 9: Topo - direita (vazando levemente na curva do topo)
+    [37, 54], // Vaga 10: Meio-Inferior - alto-esquerda
+    [68, 79], // Vaga 11: Base - meio-direita (pende abaixo da base)
+    [51, 39], // Vaga 12: Meio-Superior - centro
+    [50, 72]  // Vaga 13: Base - centro
   ];
 
   let mensagensRecebidas = [];
   let mensagensEnviadas = [];
+  let arvoreAtualRecebidos = 1;
+  let arvoreAtualEnviados = 1;
 
   if (!participanteId || sessionStorage.getItem('participanteId') !== participanteId) {
     alert('Sessão inválida! Faça login novamente.');
@@ -143,7 +153,6 @@
 
   async function carregarDados() {
     try {
-      // 1. Perfil do jogador
       const resposta = await fetch('/api/participantes/' + participanteId);
       const dados = await resposta.json();
       if (resposta.ok) {
@@ -151,7 +160,6 @@
         document.getElementById('perfilNome').textContent = dados.nome || 'Não informado';
       }
 
-      // 2. Nome do Protegido
       const respostaProtegido = await fetch('/api/participantes/' + participanteId + '/protegido');
       const protegido = await respostaProtegido.json();
       if (respostaProtegido.ok && protegido.nome) {
@@ -160,11 +168,18 @@
         document.getElementById('nomeProtegido').textContent = protegido.erro || 'Não definido';
       }
 
-      // 3. Carregar Mensagens Reais do Firestore
       await carregarMensagens();
     } catch (err) {
       console.error('Erro ao carregar dados:', err);
     }
+  }
+
+  function obterMaiorArvore(mensagens) {
+    if (!mensagens || mensagens.length === 0) return 1;
+    return mensagens.reduce(function(max, msg) {
+      const num = msg.arvoreNumero || 1;
+      return num > max ? num : max;
+    }, 1);
   }
 
   async function carregarMensagens() {
@@ -176,11 +191,49 @@
         mensagensRecebidas = dados.recebidas || [];
         mensagensEnviadas = dados.enviadas || [];
 
-        renderizarMensagens(mensagensRecebidas, 'listaRecebidas', 'arvoreRecebidos', 'Seu anjo');
-        renderizarMensagens(mensagensEnviadas, 'listaEnviadas', 'arvoreEnviados', 'Você');
+        arvoreAtualRecebidos = obterMaiorArvore(mensagensRecebidas);
+        arvoreAtualEnviados = obterMaiorArvore(mensagensEnviadas);
+
+        atualizarTelaRecebidos();
+        atualizarTelaEnviados();
       }
     } catch (err) {
       console.error('Erro ao carregar mensagens:', err);
+    }
+  }
+
+  function atualizarTelaRecebidos() {
+    renderizarPaginacao(mensagensRecebidas, arvoreAtualRecebidos, 'paginacaoRecebidos', function(novaArvore) {
+      arvoreAtualRecebidos = novaArvore;
+      atualizarTelaRecebidos();
+    });
+    renderizarMensagens(mensagensRecebidas, arvoreAtualRecebidos, 'listaRecebidas', 'arvoreRecebidos', 'Seu anjo');
+  }
+
+  function atualizarTelaEnviados() {
+    renderizarPaginacao(mensagensEnviadas, arvoreAtualEnviados, 'paginacaoEnviados', function(novaArvore) {
+      arvoreAtualEnviados = novaArvore;
+      atualizarTelaEnviados();
+    });
+    renderizarMensagens(mensagensEnviadas, arvoreAtualEnviados, 'listaEnviadas', 'arvoreEnviados', 'Você');
+  }
+
+  function renderizarPaginacao(mensagens, arvoreSelecionada, containerId, aoTrocar) {
+    const container = document.getElementById(containerId);
+    container.replaceChildren();
+
+    const totalArvores = obterMaiorArvore(mensagens);
+    if (totalArvores <= 1) return;
+
+    for (let i = 1; i <= totalArvores; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = 'Árvore ' + i;
+      btn.className = 'btn-arvore' + (i === arvoreSelecionada ? ' ativa' : '');
+      btn.onclick = function() {
+        aoTrocar(i);
+      };
+      container.appendChild(btn);
     }
   }
 
@@ -192,21 +245,24 @@
     return img;
   }
 
-  function renderizarMensagens(mensagens, listaId, arvoreId, autor) {
+  function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreId, autor) {
     const lista = document.getElementById(listaId);
     const arvore = document.getElementById(arvoreId);
     lista.replaceChildren();
     arvore.replaceChildren();
 
-    if (mensagens.length === 0) {
-      lista.innerHTML = '<p><small>Nenhuma mensagem ainda.</small></p>';
+    const mensagensDaArvore = todasMensagens.filter(function(msg) {
+      return (msg.arvoreNumero || 1) === arvoreSelecionada;
+    });
+
+    if (mensagensDaArvore.length === 0) {
+      lista.innerHTML = '<p><small>Nenhuma mensagem nesta árvore ainda.</small></p>';
       return;
     }
 
-    // Na lista de texto, mostra as mais recentes primeiro
-    const listaOrdenada = [...mensagens].reverse();
+    const listaOrdenada = [...mensagensDaArvore].reverse();
     listaOrdenada.forEach(function(mensagem) {
-      const tipo = mensagem.enfeite || 'bola';
+      const tipo = mensagem.enfeite || 'bola-vermelha';
       const recado = document.createElement('div');
       recado.className = 'recado-simulado';
 
@@ -221,9 +277,8 @@
       lista.appendChild(recado);
     });
 
-    // Na árvore, coloca cada enfeite na sua vaga fixa (posicao)
-    mensagens.forEach(function(mensagem, indice) {
-      const tipo = mensagem.enfeite || 'bola';
+    mensagensDaArvore.forEach(function(mensagem, indice) {
+      const tipo = mensagem.enfeite || 'bola-vermelha';
       const vaga = (typeof mensagem.posicao === 'number') ? mensagem.posicao : indice;
       const posicao = POSICOES_ENFEITES[vaga % POSICOES_ENFEITES.length];
 
@@ -231,6 +286,7 @@
       enfeite.className = 'enfeite-na-arvore enfeite-' + tipo;
       enfeite.style.left = posicao[0] + '%';
       enfeite.style.top = posicao[1] + '%';
+      enfeite.style.transform = 'translate(-50%, -12%)';
       enfeite.setAttribute('aria-label', autor + ' deixou ' + tipo);
       enfeite.appendChild(criarIconeEnfeite(tipo));
       arvore.appendChild(enfeite);
@@ -259,7 +315,7 @@
       if (resposta.ok) {
         campoTexto.value = '';
         status.textContent = 'Mensagem e enfeite salvos!';
-        await carregarMensagens(); // Recarrega do Firestore para atualizar tela e árvore
+        await carregarMensagens();
       } else {
         status.textContent = dados.erro || 'Erro ao enviar.';
       }
