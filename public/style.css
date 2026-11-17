@@ -325,9 +325,21 @@ button:hover {
   box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
 }
 
-.recado-texto {
+.recado-conteudo {
+  display: flex;
+  flex-direction: column;
   flex: 1;
+  min-width: 0;
+  gap: 2px;
+}
+
+.recado-texto {
   font-size: 14px;
+}
+
+.recado-meta {
+  font-size: 11px;
+  color: #777;
 }
 
 .tag-nova {

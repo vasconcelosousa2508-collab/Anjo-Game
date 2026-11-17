@@ -152,6 +152,16 @@
     document.getElementById(idTela).classList.add('ativa');
   }
 
+  function formatarDataHora(timestamp) {
+    if (!timestamp) return '';
+    const data = new Date(timestamp);
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const hora = String(data.getHours()).padStart(2, '0');
+    const min = String(data.getMinutes()).padStart(2, '0');
+    return dia + '/' + mes + ' às ' + hora + ':' + min;
+  }
+
   async function carregarDados() {
     try {
       const resposta = await fetch('/api/participantes/' + participanteId);
@@ -312,20 +322,17 @@
     lista.replaceChildren();
     arvore.replaceChildren();
 
-    const mensagensDaArvore = todasMensagens.filter(function(msg) {
-      return (msg.arvoreNumero || 1) === arvoreSelecionada;
-    });
-
-    if (mensagensDaArvore.length === 0) {
-      lista.innerHTML = '<p><small>Nenhuma mensagem nesta árvore ainda.</small></p>';
+    if (todasMensagens.length === 0) {
+      lista.innerHTML = '<p><small>Nenhuma mensagem ainda.</small></p>';
       return;
     }
 
     const mapaRecados = {};
     const mapaEnfeites = {};
+    const totalArvores = obterMaiorArvore(todasMensagens);
 
-    // 1. Renderiza a lista de mensagens (mais recentes primeiro)
-    const listaOrdenada = [...mensagensDaArvore].reverse();
+    // 1. Renderiza TODAS as mensagens juntas (mais recentes primeiro)
+    const listaOrdenada = [...todasMensagens].reverse();
     listaOrdenada.forEach(function(mensagem) {
       const tipo = mensagem.enfeite || 'bola-vermelha';
       const naoLida = eRecebida && !mensagem.lida;
@@ -338,11 +345,21 @@
       selo.className = 'selo-enfeite enfeite-' + tipo;
       selo.appendChild(criarIconeEnfeite(tipo));
 
+      const conteudo = document.createElement('div');
+      conteudo.className = 'recado-conteudo';
+
       const texto = document.createElement('span');
       texto.className = 'recado-texto';
       texto.textContent = mensagem.texto;
 
-      recado.append(selo, texto);
+      const meta = document.createElement('small');
+      meta.className = 'recado-meta';
+      const dataTxt = formatarDataHora(mensagem.criadoEm);
+      const arvoreTxt = totalArvores > 1 ? ' • Árvore ' + (mensagem.arvoreNumero || 1) : '';
+      meta.textContent = dataTxt + arvoreTxt;
+
+      conteudo.append(texto, meta);
+      recado.append(selo, conteudo);
 
       if (naoLida) {
         const tag = document.createElement('span');
@@ -352,6 +369,17 @@
       }
 
       recado.onclick = function() {
+        const arvoreDaMsg = mensagem.arvoreNumero || 1;
+        if (arvoreDaMsg !== arvoreSelecionada) {
+          if (eRecebida) {
+            arvoreAtualRecebidos = arvoreDaMsg;
+            atualizarTelaRecebidos();
+          } else {
+            arvoreAtualEnviados = arvoreDaMsg;
+            atualizarTelaEnviados();
+          }
+          return;
+        }
         destacarPar(mensagem.id, mapaEnfeites[mensagem.id], recado);
         if (eRecebida) marcarComoLida(mensagem, mapaEnfeites[mensagem.id], recado);
       };
@@ -360,7 +388,11 @@
       lista.appendChild(recado);
     });
 
-    // 2. Renderiza os enfeites na árvore com clique interativo
+    // 2. Renderiza na árvore apenas os enfeites da árvore selecionada
+    const mensagensDaArvore = todasMensagens.filter(function(msg) {
+      return (msg.arvoreNumero || 1) === arvoreSelecionada;
+    });
+
     mensagensDaArvore.forEach(function(mensagem, indice) {
       const tipo = mensagem.enfeite || 'bola-vermelha';
       const vaga = (typeof mensagem.posicao === 'number') ? mensagem.posicao : indice;
