@@ -32,9 +32,12 @@
       <p><strong>Nome:</strong> <span id="perfilNome">...</span></p>
     </div>
     <div class="arvore-msg-layout">
-      <div class="arvore-demo">
-        <img src="/assets/arvore-natal.svg" alt="Árvore de Natal">
-        <div class="arvore-enfeites" id="arvoreRecebidos"></div>
+      <div class="arvore-coluna">
+        <div id="paginacaoRecebidos" class="paginacao-arvores"></div>
+        <div class="arvore-demo">
+          <img src="/assets/arvore-natal.svg" alt="Árvore de Natal">
+          <div class="arvore-enfeites" id="arvoreRecebidos"></div>
+        </div>
       </div>
       <div class="card mensagens-card">
         <h3>Mensagens Recebidas</h3>
@@ -48,24 +51,23 @@
     <button onclick="navegarPara('telaMenu')">Voltar</button>
     <h2>Seu Protegido</h2>
     <div class="card">
-      <p><strong>Amigo Secreto:</strong> <span id="nomeProtegido">Fulano (Simulado)</span></p>
+      <p><strong>Amigo Secreto:</strong> <span id="nomeProtegido">Carregando...</span></p>
     </div>
     <div class="arvore-msg-layout">
-      <div class="arvore-demo">
-        <img src="/assets/arvore-natal.svg" alt="Árvore de Natal do seu protegido">
-        <div class="arvore-enfeites" id="arvoreEnviados"></div>
+      <div class="arvore-coluna">
+        <div id="paginacaoEnviados" class="paginacao-arvores"></div>
+        <div class="arvore-demo">
+          <img src="/assets/arvore-natal.svg" alt="Árvore de Natal do seu protegido">
+          <div class="arvore-enfeites" id="arvoreEnviados"></div>
+        </div>
       </div>
       <div class="mensagens-card">
         <div class="card">
           <h3>Enviar Mensagem Anônima</h3>
           <form id="formRecado">
             <textarea id="msgTexto" placeholder="Escreva sua mensagem..." required></textarea>
-            <fieldset class="seletor-enfeite">
+            <fieldset class="seletor-enfeite" id="containerSeletorEnfeite">
               <legend>Escolha um enfeite</legend>
-              <label><input type="radio" name="enfeite" value="bola" checked><span class="selo-enfeite enfeite-bola"><svg aria-hidden="true"><use href="/assets/enfeites.svg#bola"></use></svg></span> Bola</label>
-              <label><input type="radio" name="enfeite" value="estrela"><span class="selo-enfeite enfeite-estrela"><svg aria-hidden="true"><use href="/assets/enfeites.svg#estrela"></use></svg></span> Estrela</label>
-              <label><input type="radio" name="enfeite" value="sino"><span class="selo-enfeite enfeite-sino"><svg aria-hidden="true"><use href="/assets/enfeites.svg#sino"></use></svg></span> Sino</label>
-              <label><input type="radio" name="enfeite" value="presente"><span class="selo-enfeite enfeite-presente"><svg aria-hidden="true"><use href="/assets/enfeites.svg#presente"></use></svg></span> Presente</label>
             </fieldset>
             <button type="submit">Enviar</button>
             <p id="statusRecado" role="status"></p>
@@ -82,25 +84,65 @@
 <script>
   const params = new URLSearchParams(window.location.search);
   const participanteId = params.get('id');
-  const mensagensRecebidas = [
-    { texto: 'Seu cuidado deixa tudo mais bonito. Feliz Natal!', enfeite: 'estrela' },
-    { texto: 'Que nunca faltem motivos para sorrir por aí.', enfeite: 'sino' }
+
+  const CATALOGO_ENFEITES = [
+    { id: 'bola-amarela', nome: 'bola amarela' },
+    { id: 'bola-azul', nome: 'bola azul' },
+    { id: 'bola-laranja', nome: 'bola laranja' },
+    { id: 'bola-roxa', nome: 'bola roxa' },
+    { id: 'bola-verde', nome: 'bola verde' },
+    { id: 'bola-vermelha', nome: 'bola vermelha' },
+    { id: 'floco', nome: 'floco' }
   ];
-  const mensagensEnviadas = [
-    { texto: 'Passei para deixar um abraço e um pouco de magia.', enfeite: 'bola' }
+
+ 
+// 14 vagas [x%, y%] ancoradas pela ARGOLA (translate -50%, -12%):
+  // A argola crava no galho e a bola pende para baixo, com pontas vazando nas bordas inferiores
+  const POSICOES_ENFEITES = [
+    [21, 63], // Vaga 0: Meio-Inferior - ponta esquerda (bola pende vazando abaixo da curva)
+    [88, 80], // Vaga 1: Base - ponta extrema direita (bola pende vazando na borda)
+    [45, 22], // Vaga 2: Topo - meio-esquerda
+    [12, 80], // Vaga 3: Base - ponta extrema esquerda (bola pende vazando na borda)
+    [76, 45], // Vaga 4: Meio-Superior - ponta direita (vazando na curva inferior)
+    [54, 59], // Vaga 5: Meio-Inferior - miolo direita
+    [24, 44], // Vaga 6: Meio-Superior - ponta esquerda (vazando na curva inferior)
+    [82, 62], // Vaga 7: Meio-Inferior - ponta direita (vazando na curva inferior)
+    [32, 77], // Vaga 8: Base - miolo esquerda
+    [58, 25], // Vaga 9: Topo - direita (vazando levemente na curva do topo)
+    [37, 54], // Vaga 10: Meio-Inferior - alto-esquerda
+    [68, 79], // Vaga 11: Base - meio-direita (pende abaixo da base)
+    [51, 39], // Vaga 12: Meio-Superior - centro
+    [50, 72]  // Vaga 13: Base - centro
   ];
-  const posicoesEnfeites = [[32, 43], [65, 52], [44, 65], [66, 72], [35, 77], [52, 37]];
+
+  let mensagensRecebidas = [];
+  let mensagensEnviadas = [];
+  let arvoreAtualRecebidos = 1;
+  let arvoreAtualEnviados = 1;
 
   if (!participanteId || sessionStorage.getItem('participanteId') !== participanteId) {
     alert('Sessão inválida! Faça login novamente.');
     window.location.href = '/';
   } else {
+    montarSeletorEnfeites();
     carregarDados();
   }
 
-  document.getElementById('formRecado').addEventListener('submit', enviarMensagemSimulada);
-  renderizarMensagens(mensagensRecebidas, 'listaRecebidas', 'arvoreRecebidos', 'Seu anjo');
-  renderizarMensagens(mensagensEnviadas, 'listaEnviadas', 'arvoreEnviados', 'Você');
+  document.getElementById('formRecado').addEventListener('submit', enviarMensagemReal);
+
+  function montarSeletorEnfeites() {
+    const fieldset = document.getElementById('containerSeletorEnfeite');
+    CATALOGO_ENFEITES.forEach(function(item, index) {
+      const label = document.createElement('label');
+      const checked = index === 0 ? 'checked' : '';
+      label.innerHTML =
+        '<input type="radio" name="enfeite" value="' + item.id + '" ' + checked + '>' +
+        '<span class="selo-enfeite enfeite-' + item.id + '">' +
+        '<img src="/assets/' + item.id + '.svg" alt="">' +
+        '</span> ' + item.nome;
+      fieldset.appendChild(label);
+    });
+  }
 
   function navegarPara(idTela) {
     document.querySelectorAll('.tela').forEach(function(tela) {
@@ -110,85 +152,177 @@
   }
 
   async function carregarDados() {
-  try {
-    // 1. Carrega os dados do participante logado
-    const resposta = await fetch('/api/participantes/' + participanteId);
-    const dados = await resposta.json();
-    
-    if (resposta.ok) {
-      document.getElementById('nomeJogador').textContent = dados.nome;
-      document.getElementById('perfilNome').textContent = dados.nome || 'Não informado';
-    } else {
-      alert(dados.erro || 'Erro ao carregar seu perfil.');
-      return;
+    try {
+      const resposta = await fetch('/api/participantes/' + participanteId);
+      const dados = await resposta.json();
+      if (resposta.ok) {
+        document.getElementById('nomeJogador').textContent = dados.nome;
+        document.getElementById('perfilNome').textContent = dados.nome || 'Não informado';
+      }
+
+      const respostaProtegido = await fetch('/api/participantes/' + participanteId + '/protegido');
+      const protegido = await respostaProtegido.json();
+      if (respostaProtegido.ok && protegido.nome) {
+        document.getElementById('nomeProtegido').textContent = protegido.nome;
+      } else {
+        document.getElementById('nomeProtegido').textContent = protegido.erro || 'Não definido';
+      }
+
+      await carregarMensagens();
+    } catch (err) {
+      console.error('Erro ao carregar dados:', err);
     }
-
-    // 2. Carrega quem é o Protegido (Sorteado)
-    const respostaProtegido = await fetch('/api/participantes/' + participanteId + '/protegido');
-    const protegido = await respostaProtegido.json();
-
-    if (respostaProtegido.ok && protegido.nome) {
-      // Atualiza o texto na tela com o nome REAL vindo do Firebase
-      document.getElementById('nomeProtegido').textContent = protegido.nome;
-    } else {
-      // Exibe a mensagem de erro do backend caso o sorteio não tenha ocorrido
-      document.getElementById('nomeProtegido').textContent = protegido.erro || 'Sorteio ainda não realizado';
-    }
-
-  } catch (err) {
-    console.error('Erro ao carregar dados:', err);
-    document.getElementById('nomeProtegido').textContent = 'Erro ao carregar protegido';
   }
-}
+
+  function obterMaiorArvore(mensagens) {
+    if (!mensagens || mensagens.length === 0) return 1;
+    return mensagens.reduce(function(max, msg) {
+      const num = msg.arvoreNumero || 1;
+      return num > max ? num : max;
+    }, 1);
+  }
+
+  async function carregarMensagens() {
+    try {
+      const resposta = await fetch('/api/participantes/' + participanteId + '/mensagens');
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        mensagensRecebidas = dados.recebidas || [];
+        mensagensEnviadas = dados.enviadas || [];
+
+        arvoreAtualRecebidos = obterMaiorArvore(mensagensRecebidas);
+        arvoreAtualEnviados = obterMaiorArvore(mensagensEnviadas);
+
+        atualizarTelaRecebidos();
+        atualizarTelaEnviados();
+      }
+    } catch (err) {
+      console.error('Erro ao carregar mensagens:', err);
+    }
+  }
+
+  function atualizarTelaRecebidos() {
+    renderizarPaginacao(mensagensRecebidas, arvoreAtualRecebidos, 'paginacaoRecebidos', function(novaArvore) {
+      arvoreAtualRecebidos = novaArvore;
+      atualizarTelaRecebidos();
+    });
+    renderizarMensagens(mensagensRecebidas, arvoreAtualRecebidos, 'listaRecebidas', 'arvoreRecebidos', 'Seu anjo');
+  }
+
+  function atualizarTelaEnviados() {
+    renderizarPaginacao(mensagensEnviadas, arvoreAtualEnviados, 'paginacaoEnviados', function(novaArvore) {
+      arvoreAtualEnviados = novaArvore;
+      atualizarTelaEnviados();
+    });
+    renderizarMensagens(mensagensEnviadas, arvoreAtualEnviados, 'listaEnviadas', 'arvoreEnviados', 'Você');
+  }
+
+  function renderizarPaginacao(mensagens, arvoreSelecionada, containerId, aoTrocar) {
+    const container = document.getElementById(containerId);
+    container.replaceChildren();
+
+    const totalArvores = obterMaiorArvore(mensagens);
+    if (totalArvores <= 1) return;
+
+    for (let i = 1; i <= totalArvores; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = 'Árvore ' + i;
+      btn.className = 'btn-arvore' + (i === arvoreSelecionada ? ' ativa' : '');
+      btn.onclick = function() {
+        aoTrocar(i);
+      };
+      container.appendChild(btn);
+    }
+  }
 
   function criarIconeEnfeite(tipo) {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-    svg.setAttribute('viewBox', '0 0 40 40');
-    use.setAttribute('href', '/assets/enfeites.svg#' + tipo);
-    svg.appendChild(use);
-    return svg;
+    const nomeArquivo = (tipo === 'bola') ? 'bola-vermelha' : tipo;
+    const img = document.createElement('img');
+    img.src = '/assets/' + nomeArquivo + '.svg';
+    img.alt = nomeArquivo;
+    return img;
   }
 
-  function renderizarMensagens(mensagens, listaId, arvoreId, autor) {
+  function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreId, autor) {
     const lista = document.getElementById(listaId);
     const arvore = document.getElementById(arvoreId);
     lista.replaceChildren();
     arvore.replaceChildren();
 
-    mensagens.forEach(function(mensagem, indice) {
-      const tipo = mensagem.enfeite || 'bola';
+    const mensagensDaArvore = todasMensagens.filter(function(msg) {
+      return (msg.arvoreNumero || 1) === arvoreSelecionada;
+    });
+
+    if (mensagensDaArvore.length === 0) {
+      lista.innerHTML = '<p><small>Nenhuma mensagem nesta árvore ainda.</small></p>';
+      return;
+    }
+
+    const listaOrdenada = [...mensagensDaArvore].reverse();
+    listaOrdenada.forEach(function(mensagem) {
+      const tipo = mensagem.enfeite || 'bola-vermelha';
       const recado = document.createElement('div');
       recado.className = 'recado-simulado';
+
       const selo = document.createElement('span');
       selo.className = 'selo-enfeite enfeite-' + tipo;
       selo.appendChild(criarIconeEnfeite(tipo));
+
       const texto = document.createElement('span');
       texto.textContent = mensagem.texto;
+
       recado.append(selo, texto);
       lista.appendChild(recado);
+    });
 
-      const posicao = posicoesEnfeites[indice % posicoesEnfeites.length];
+    mensagensDaArvore.forEach(function(mensagem, indice) {
+      const tipo = mensagem.enfeite || 'bola-vermelha';
+      const vaga = (typeof mensagem.posicao === 'number') ? mensagem.posicao : indice;
+      const posicao = POSICOES_ENFEITES[vaga % POSICOES_ENFEITES.length];
+
       const enfeite = document.createElement('span');
       enfeite.className = 'enfeite-na-arvore enfeite-' + tipo;
       enfeite.style.left = posicao[0] + '%';
       enfeite.style.top = posicao[1] + '%';
+      enfeite.style.transform = 'translate(-50%, -12%)';
       enfeite.setAttribute('aria-label', autor + ' deixou ' + tipo);
       enfeite.appendChild(criarIconeEnfeite(tipo));
       arvore.appendChild(enfeite);
     });
   }
 
-  function enviarMensagemSimulada(evento) {
+  async function enviarMensagemReal(evento) {
     evento.preventDefault();
-    const texto = document.getElementById('msgTexto').value.trim();
+    const campoTexto = document.getElementById('msgTexto');
+    const status = document.getElementById('statusRecado');
+    const texto = campoTexto.value.trim();
     if (!texto) return;
 
     const enfeite = document.querySelector('input[name="enfeite"]:checked').value;
-    mensagensEnviadas.unshift({ texto: texto, enfeite: enfeite });
-    renderizarMensagens(mensagensEnviadas, 'listaEnviadas', 'arvoreEnviados', 'Você');
-    document.getElementById('formRecado').reset();
-    document.getElementById('statusRecado').textContent = 'Mensagem e enfeite adicionados (simulação).';
+    status.textContent = 'Enviando...';
+
+    try {
+      const resposta = await fetch('/api/participantes/' + participanteId + '/mensagens', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texto: texto, enfeite: enfeite })
+      });
+
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        campoTexto.value = '';
+        status.textContent = 'Mensagem e enfeite salvos!';
+        await carregarMensagens();
+      } else {
+        status.textContent = dados.erro || 'Erro ao enviar.';
+      }
+    } catch (err) {
+      console.error('Erro ao enviar mensagem:', err);
+      status.textContent = 'Erro de conexão com o servidor.';
+    }
   }
 
   function sair() {
@@ -200,4 +334,3 @@
 </script>
 </body>
 </html>
-
