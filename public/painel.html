@@ -104,6 +104,8 @@
     </div>
   </div>
 
+<script src="/socket.io/socket.io.js"></script>
+
 <script>
   const params = new URLSearchParams(window.location.search);
   const participanteId = params.get('id');
@@ -148,6 +150,7 @@
   } else {
     montarSeletorEnfeites();
     carregarDados();
+    conectarTempoReal();
   }
 
   document.getElementById('formRecado').addEventListener('submit', enviarMensagemReal);
@@ -218,6 +221,32 @@
     } catch (err) {
       console.error('Erro ao carregar dados:', err);
     }
+  }
+
+  function conectarTempoReal() {
+    if (typeof io === 'undefined') return;
+    const socket = io();
+
+    socket.on('connect', function() {
+      socket.emit('entrar_sala', participanteId);
+    });
+
+    socket.on('nova_mensagem', function(novaMsg) {
+      if (mensagensRecebidas.some(function(m) { return m.id === novaMsg.id; })) return;
+      mensagensRecebidas.push(novaMsg);
+      arvoreAtualRecebidos = obterMaiorArvore(mensagensRecebidas);
+      atualizarBadgeMenu();
+      atualizarTelaRecebidos();
+    });
+
+    socket.on('mensagem_lida', function(dados) {
+      const msg = mensagensRecebidas.find(function(m) { return m.id === dados.id; });
+      if (msg && !msg.lida) {
+        msg.lida = true;
+        atualizarBadgeMenu();
+        atualizarTelaRecebidos();
+      }
+    });
   }
 
   function obterMaiorArvore(mensagens) {

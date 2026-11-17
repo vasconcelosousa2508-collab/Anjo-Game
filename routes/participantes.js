@@ -141,11 +141,19 @@ router.post('/:id/mensagens', async (req, res) => {
 
     const docRef = await db.collection('mensagens').add(novaMensagem);
 
-    res.status(201).json({
+    const mensagemFormatada = {
       id: docRef.id,
       ...novaMensagem,
       criadoEm: novaMensagem.criadoEm.getTime()
-    });
+    };
+
+    // Emite em tempo real para a sala do destinatário
+    const io = req.app.get('io');
+    if (io) {
+      io.to('participante_' + destinatarioId).emit('nova_mensagem', mensagemFormatada);
+    }
+
+    res.status(201).json(mensagemFormatada);
 
   } catch (error) {
     console.error('Erro ao salvar mensagem:', error);
@@ -169,6 +177,13 @@ router.patch('/:id/mensagens/:msgId/lida', async (req, res) => {
     }
 
     await msgRef.update({ lida: true });
+
+    // Sincroniza leitura em tempo real para o participante
+    const io = req.app.get('io');
+    if (io) {
+      io.to('participante_' + id).emit('mensagem_lida', { id: msgId });
+    }
+
     res.json({ id: msgId, lida: true });
 
   } catch (error) {
