@@ -15,7 +15,7 @@
     <div class="perfis-container">
       <div class="perfil-card" onclick="navegarPara('telaMeuPerfil')">
         <img src="https://api.dicebear.com/7.x/bottts/svg?seed=MeuPerfil" class="avatar-circulo" alt="">
-        <p><strong>Meu Perfil</strong></p>
+        <p><strong>Meu Perfil</strong> <span id="badgeMenuNovas" class="badge-novas" hidden></span></p>
       </div>
       <div class="perfil-card" onclick="navegarPara('telaProtegido')">
         <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Protegido" class="avatar-circulo" alt="">
@@ -38,6 +38,7 @@
           <img src="/assets/arvore-natal.svg" alt="Árvore de Natal">
           <div class="arvore-enfeites" id="arvoreRecebidos"></div>
         </div>
+        <p class="dica-arvore"><small>Toque em um enfeite para abrir a mensagem</small></p>
       </div>
       <div class="card mensagens-card">
         <h3>Mensagens Recebidas</h3>
@@ -60,6 +61,7 @@
           <img src="/assets/arvore-natal.svg" alt="Árvore de Natal do seu protegido">
           <div class="arvore-enfeites" id="arvoreEnviados"></div>
         </div>
+        <p class="dica-arvore"><small>Toque em um enfeite para localizar o recado</small></p>
       </div>
       <div class="mensagens-card">
         <div class="card">
@@ -95,24 +97,23 @@
     { id: 'floco', nome: 'floco' }
   ];
 
- 
-// 14 vagas [x%, y%] ancoradas pela ARGOLA (translate -50%, -12%):
-  // A argola crava no galho e a bola pende para baixo, com pontas vazando nas bordas inferiores
+  // 14 vagas [x%, y%] ancoradas pela ARGOLA (translate -50%, -12%)
   const POSICOES_ENFEITES = [
-    [21, 63], // Vaga 0: Meio-Inferior - ponta esquerda (bola pende vazando abaixo da curva)
-    [88, 80], // Vaga 1: Base - ponta extrema direita (bola pende vazando na borda)
+    [21, 63], // Vaga 0: Meio-Inferior - ponta esquerda
+    [88, 80], // Vaga 1: Base - ponta extrema direita
     [45, 22], // Vaga 2: Topo - meio-esquerda
-    [12, 80], // Vaga 3: Base - ponta extrema esquerda (bola pende vazando na borda)
-    [76, 45], // Vaga 4: Meio-Superior - ponta direita (vazando na curva inferior)
+    [12, 80], // Vaga 3: Base - ponta extrema esquerda
+    [76, 45], // Vaga 4: Meio-Superior - ponta direita
     [54, 59], // Vaga 5: Meio-Inferior - miolo direita
-    [24, 44], // Vaga 6: Meio-Superior - ponta esquerda (vazando na curva inferior)
-    [82, 62], // Vaga 7: Meio-Inferior - ponta direita (vazando na curva inferior)
+    [24, 44], // Vaga 6: Meio-Superior - ponta esquerda
+    [82, 62], // Vaga 7: Meio-Inferior - ponta direita
     [32, 77], // Vaga 8: Base - miolo esquerda
-    [58, 25], // Vaga 9: Topo - direita (vazando levemente na curva do topo)
+    [65, 30], // Vaga 9: Topo - direita
     [37, 54], // Vaga 10: Meio-Inferior - alto-esquerda
-    [68, 79], // Vaga 11: Base - meio-direita (pende abaixo da base)
+    [68, 79], // Vaga 11: Base - meio-direita
     [51, 39], // Vaga 12: Meio-Superior - centro
-    [50, 72]  // Vaga 13: Base - centro
+    [50, 72],  // Vaga 13: Base - centro
+    [30, 28], // Vaga 14: Meio-Superior - ponta esquerda
   ];
 
   let mensagensRecebidas = [];
@@ -182,6 +183,17 @@
     }, 1);
   }
 
+  function atualizarBadgeMenu() {
+    const badge = document.getElementById('badgeMenuNovas');
+    const naoLidas = mensagensRecebidas.filter(function(m) { return !m.lida; }).length;
+    if (naoLidas > 0) {
+      badge.textContent = naoLidas + (naoLidas === 1 ? ' nova' : ' novas');
+      badge.hidden = false;
+    } else {
+      badge.hidden = true;
+    }
+  }
+
   async function carregarMensagens() {
     try {
       const resposta = await fetch('/api/participantes/' + participanteId + '/mensagens');
@@ -194,6 +206,7 @@
         arvoreAtualRecebidos = obterMaiorArvore(mensagensRecebidas);
         arvoreAtualEnviados = obterMaiorArvore(mensagensEnviadas);
 
+        atualizarBadgeMenu();
         atualizarTelaRecebidos();
         atualizarTelaEnviados();
       }
@@ -203,22 +216,22 @@
   }
 
   function atualizarTelaRecebidos() {
-    renderizarPaginacao(mensagensRecebidas, arvoreAtualRecebidos, 'paginacaoRecebidos', function(novaArvore) {
+    renderizarPaginacao(mensagensRecebidas, arvoreAtualRecebidos, 'paginacaoRecebidos', true, function(novaArvore) {
       arvoreAtualRecebidos = novaArvore;
       atualizarTelaRecebidos();
     });
-    renderizarMensagens(mensagensRecebidas, arvoreAtualRecebidos, 'listaRecebidas', 'arvoreRecebidos', 'Seu anjo');
+    renderizarMensagens(mensagensRecebidas, arvoreAtualRecebidos, 'listaRecebidas', 'arvoreRecebidos', 'Seu anjo', true);
   }
 
   function atualizarTelaEnviados() {
-    renderizarPaginacao(mensagensEnviadas, arvoreAtualEnviados, 'paginacaoEnviados', function(novaArvore) {
+    renderizarPaginacao(mensagensEnviadas, arvoreAtualEnviados, 'paginacaoEnviados', false, function(novaArvore) {
       arvoreAtualEnviados = novaArvore;
       atualizarTelaEnviados();
     });
-    renderizarMensagens(mensagensEnviadas, arvoreAtualEnviados, 'listaEnviadas', 'arvoreEnviados', 'Você');
+    renderizarMensagens(mensagensEnviadas, arvoreAtualEnviados, 'listaEnviadas', 'arvoreEnviados', 'Você', false);
   }
 
-  function renderizarPaginacao(mensagens, arvoreSelecionada, containerId, aoTrocar) {
+  function renderizarPaginacao(mensagens, arvoreSelecionada, containerId, checarNaoLidas, aoTrocar) {
     const container = document.getElementById(containerId);
     container.replaceChildren();
 
@@ -228,8 +241,16 @@
     for (let i = 1; i <= totalArvores; i++) {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.textContent = 'Árvore ' + i;
-      btn.className = 'btn-arvore' + (i === arvoreSelecionada ? ' ativa' : '');
+
+      const temNovaNaArvore = checarNaoLidas && mensagens.some(function(m) {
+        return (m.arvoreNumero || 1) === i && !m.lida;
+      });
+
+      btn.textContent = 'Árvore ' + i + (temNovaNaArvore ? ' •' : '');
+      btn.className = 'btn-arvore' +
+        (i === arvoreSelecionada ? ' ativa' : '') +
+        (temNovaNaArvore ? ' tem-nova' : '');
+
       btn.onclick = function() {
         aoTrocar(i);
       };
@@ -245,7 +266,47 @@
     return img;
   }
 
-  function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreId, autor) {
+  function destacarPar(mensagemId, enfeiteEl, recadoEl) {
+    document.querySelectorAll('.destaque-ativo').forEach(function(el) {
+      el.classList.remove('destaque-ativo');
+    });
+
+    if (enfeiteEl) enfeiteEl.classList.add('destaque-ativo');
+    if (recadoEl) {
+      recadoEl.classList.add('destaque-ativo');
+      recadoEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  async function marcarComoLida(mensagem, enfeiteEl, recadoEl) {
+    if (mensagem.lida) return;
+
+    // Atualiza visualmente na hora (otimista)
+    mensagem.lida = true;
+    if (enfeiteEl) enfeiteEl.classList.remove('nao-lida');
+    if (recadoEl) {
+      recadoEl.classList.remove('nao-lida');
+      const tagNova = recadoEl.querySelector('.tag-nova');
+      if (tagNova) tagNova.remove();
+    }
+    atualizarBadgeMenu();
+
+    // Atualiza botão da paginação caso o pontinho de "nova" deva sumir
+    renderizarPaginacao(mensagensRecebidas, arvoreAtualRecebidos, 'paginacaoRecebidos', true, function(novaArvore) {
+      arvoreAtualRecebidos = novaArvore;
+      atualizarTelaRecebidos();
+    });
+
+    try {
+      await fetch('/api/participantes/' + participanteId + '/mensagens/' + mensagem.id + '/lida', {
+        method: 'PATCH'
+      });
+    } catch (err) {
+      console.error('Erro ao marcar mensagem como lida:', err);
+    }
+  }
+
+  function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreId, autor, eRecebida) {
     const lista = document.getElementById(listaId);
     const arvore = document.getElementById(arvoreId);
     lista.replaceChildren();
@@ -260,35 +321,68 @@
       return;
     }
 
+    const mapaRecados = {};
+    const mapaEnfeites = {};
+
+    // 1. Renderiza a lista de mensagens (mais recentes primeiro)
     const listaOrdenada = [...mensagensDaArvore].reverse();
     listaOrdenada.forEach(function(mensagem) {
       const tipo = mensagem.enfeite || 'bola-vermelha';
+      const naoLida = eRecebida && !mensagem.lida;
+
       const recado = document.createElement('div');
-      recado.className = 'recado-simulado';
+      recado.className = 'recado-simulado' + (naoLida ? ' nao-lida' : '');
+      recado.dataset.msgId = mensagem.id;
 
       const selo = document.createElement('span');
       selo.className = 'selo-enfeite enfeite-' + tipo;
       selo.appendChild(criarIconeEnfeite(tipo));
 
       const texto = document.createElement('span');
+      texto.className = 'recado-texto';
       texto.textContent = mensagem.texto;
 
       recado.append(selo, texto);
+
+      if (naoLida) {
+        const tag = document.createElement('span');
+        tag.className = 'tag-nova';
+        tag.textContent = 'Nova';
+        recado.appendChild(tag);
+      }
+
+      recado.onclick = function() {
+        destacarPar(mensagem.id, mapaEnfeites[mensagem.id], recado);
+        if (eRecebida) marcarComoLida(mensagem, mapaEnfeites[mensagem.id], recado);
+      };
+
+      mapaRecados[mensagem.id] = recado;
       lista.appendChild(recado);
     });
 
+    // 2. Renderiza os enfeites na árvore com clique interativo
     mensagensDaArvore.forEach(function(mensagem, indice) {
       const tipo = mensagem.enfeite || 'bola-vermelha';
       const vaga = (typeof mensagem.posicao === 'number') ? mensagem.posicao : indice;
       const posicao = POSICOES_ENFEITES[vaga % POSICOES_ENFEITES.length];
+      const naoLida = eRecebida && !mensagem.lida;
 
-      const enfeite = document.createElement('span');
-      enfeite.className = 'enfeite-na-arvore enfeite-' + tipo;
+      const enfeite = document.createElement('button');
+      enfeite.type = 'button';
+      enfeite.className = 'enfeite-na-arvore enfeite-' + tipo + (naoLida ? ' nao-lida' : '');
       enfeite.style.left = posicao[0] + '%';
       enfeite.style.top = posicao[1] + '%';
       enfeite.style.transform = 'translate(-50%, -12%)';
       enfeite.setAttribute('aria-label', autor + ' deixou ' + tipo);
       enfeite.appendChild(criarIconeEnfeite(tipo));
+
+      enfeite.onclick = function() {
+        const recadoAlvo = mapaRecados[mensagem.id];
+        destacarPar(mensagem.id, enfeite, recadoAlvo);
+        if (eRecebida) marcarComoLida(mensagem, enfeite, recadoAlvo);
+      };
+
+      mapaEnfeites[mensagem.id] = enfeite;
       arvore.appendChild(enfeite);
     });
   }

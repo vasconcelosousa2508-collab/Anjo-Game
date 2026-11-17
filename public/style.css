@@ -149,6 +149,17 @@ button:hover {
   background: #fff;
 }
 
+.badge-novas {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #5c3d00;
+  background: #ffd54f;
+  border-radius: 10px;
+}
+
 .page-painel .card {
   border: 1px solid #ccc;
   padding: 15px;
@@ -199,6 +210,12 @@ button:hover {
   width: 100%;
 }
 
+.dica-arvore {
+  margin: 8px 0 0;
+  color: #666;
+  text-align: center;
+}
+
 .paginacao-arvores {
   display: flex;
   flex-wrap: wrap;
@@ -215,16 +232,33 @@ button:hover {
   margin-top: 0;
 }
 
+.paginacao-arvores .btn-arvore.tem-nova {
+  border: 1px solid #f59e0b;
+}
+
 .paginacao-arvores .btn-arvore.ativa {
   background: #2e7d32;
   color: #fff;
   font-weight: bold;
 }
 
-.enfeite-na-arvore {
+/* ENFEITES INTERATIVOS NA ÁRVORE */
+.page-painel .enfeite-na-arvore {
   position: absolute;
   width: 36px;
   height: 43px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: filter 0.2s ease, scale 0.2s ease;
+}
+
+.page-painel .enfeite-na-arvore:hover {
+  scale: 1.12;
+  opacity: 1;
 }
 
 .enfeite-na-arvore img {
@@ -234,6 +268,31 @@ button:hover {
   display: block;
 }
 
+/* Brilho pulsante para mensagem nova (não lida) */
+@keyframes brilho-enfeite {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(255, 213, 79, 0.85));
+    scale: 1;
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(255, 235, 59, 1)) drop-shadow(0 0 18px rgba(255, 193, 7, 0.9));
+    scale: 1.14;
+  }
+}
+
+.enfeite-na-arvore.nao-lida {
+  animation: brilho-enfeite 1.6s infinite ease-in-out;
+  z-index: 2;
+}
+
+/* Destaque ao clicar no enfeite ou na mensagem */
+.enfeite-na-arvore.destaque-ativo {
+  filter: drop-shadow(0 0 10px rgba(46, 125, 50, 0.95));
+  scale: 1.18;
+  z-index: 3;
+}
+
+/* LISTA DE RECADOS */
 .mensagens-card {
   flex: 1;
   min-width: 0;
@@ -247,10 +306,37 @@ button:hover {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.recado-simulado > span:last-child {
+.recado-simulado:hover {
+  background: #f9f9f9;
+}
+
+.recado-simulado.nao-lida {
+  background: #fffdf2;
+  border-color: #f59e0b;
+}
+
+.recado-simulado.destaque-ativo {
+  background: #e8f5e9;
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+}
+
+.recado-texto {
+  flex: 1;
   font-size: 14px;
+}
+
+.tag-nova {
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #5c3d00;
+  background: #ffd54f;
+  border-radius: 4px;
 }
 
 .selo-enfeite {

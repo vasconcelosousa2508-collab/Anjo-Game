@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../firebaseConfig');
 
-const CAPACIDADE_ARVORE = 14; // Máximo de enfeites por árvore
+const CAPACIDADE_ARVORE = 15; // Máximo de enfeites por árvore
 
 // 1. GET: Perfil do participante
 router.get('/:id', async (req, res) => {
@@ -150,6 +150,30 @@ router.post('/:id/mensagens', async (req, res) => {
   } catch (error) {
     console.error('Erro ao salvar mensagem:', error);
     res.status(500).json({ erro: 'Erro ao enviar mensagem.' });
+  }
+});
+
+// 5. PATCH: Marcar mensagem recebida como lida
+router.patch('/:id/mensagens/:msgId/lida', async (req, res) => {
+  try {
+    const { id, msgId } = req.params;
+    const msgRef = db.collection('mensagens').doc(msgId);
+    const doc = await msgRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ erro: 'Mensagem não encontrada.' });
+    }
+
+    if (doc.data().destinatarioId !== id) {
+      return res.status(403).json({ erro: 'Sem permissão para alterar esta mensagem.' });
+    }
+
+    await msgRef.update({ lida: true });
+    res.json({ id: msgId, lida: true });
+
+  } catch (error) {
+    console.error('Erro ao marcar mensagem como lida:', error);
+    res.status(500).json({ erro: 'Erro ao atualizar status da mensagem.' });
   }
 });
 
