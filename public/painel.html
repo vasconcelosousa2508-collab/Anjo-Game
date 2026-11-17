@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Anjo - Meu Painel</title>
   <link rel="stylesheet" href="/style.css">
 </head>
@@ -31,8 +32,14 @@
     <div class="card">
       <p><strong>Nome:</strong> <span id="perfilNome">...</span></p>
     </div>
-    <div class="arvore-msg-layout">
-      <div class="arvore-coluna">
+
+    <div class="mobile-tabs">
+      <button type="button" class="tab-btn ativa" data-grupo="perfil" data-alvo="arvore" onclick="trocarAbaMobile('perfil', 'arvore')">Árvore</button>
+      <button type="button" class="tab-btn" data-grupo="perfil" data-alvo="lista" onclick="trocarAbaMobile('perfil', 'lista')">Mensagens</button>
+    </div>
+
+    <div class="arvore-msg-layout" id="layoutPerfil" data-aba-ativa="arvore">
+      <div class="arvore-coluna painel-aba" data-aba="arvore">
         <div id="paginacaoRecebidos" class="paginacao-arvores"></div>
         <div class="arvore-demo">
           <img src="/assets/arvore-natal.svg" alt="Árvore de Natal">
@@ -40,7 +47,7 @@
         </div>
         <p class="dica-arvore"><small>Toque em um enfeite para abrir a mensagem</small></p>
       </div>
-      <div class="card mensagens-card">
+      <div class="card mensagens-card painel-aba" data-aba="lista">
         <h3>Mensagens Recebidas</h3>
         <div id="listaRecebidas"></div>
       </div>
@@ -54,8 +61,14 @@
     <div class="card">
       <p><strong>Amigo Secreto:</strong> <span id="nomeProtegido">Carregando...</span></p>
     </div>
-    <div class="arvore-msg-layout">
-      <div class="arvore-coluna">
+
+    <div class="mobile-tabs">
+      <button type="button" class="tab-btn ativa" data-grupo="protegido" data-alvo="decorar" onclick="trocarAbaMobile('protegido', 'decorar')">Decorar</button>
+      <button type="button" class="tab-btn" data-grupo="protegido" data-alvo="arvore" onclick="trocarAbaMobile('protegido', 'arvore')">Árvore</button>
+    </div>
+
+    <div class="arvore-msg-layout" id="layoutProtegido" data-aba-ativa="decorar">
+      <div class="arvore-coluna painel-aba" data-aba="arvore">
         <div id="paginacaoEnviados" class="paginacao-arvores"></div>
         <div class="arvore-demo">
           <img src="/assets/arvore-natal.svg" alt="Árvore de Natal do seu protegido">
@@ -63,7 +76,7 @@
         </div>
         <p class="dica-arvore"><small>Toque em um enfeite para localizar o recado</small></p>
       </div>
-      <div class="mensagens-card">
+      <div class="mensagens-card painel-aba" data-aba="decorar">
         <div class="card">
           <h3>Enviar Mensagem Anônima</h3>
           <form id="formRecado">
@@ -83,6 +96,14 @@
     </div>
   </div>
 
+  <!-- POPUP DO CARTÃO (PISTA / MENSAGEM EM FOCO) -->
+  <div id="overlayCartao" class="overlay-cartao" hidden onclick="fecharPopupCartao(event)">
+    <div class="popup-cartao" onclick="event.stopPropagation()">
+      <button type="button" class="btn-fechar-popup" onclick="fecharPopupCartao()" aria-label="Fechar">✕</button>
+      <div id="conteudoPopupCartao"></div>
+    </div>
+  </div>
+
 <script>
   const params = new URLSearchParams(window.location.search);
   const participanteId = params.get('id');
@@ -97,7 +118,7 @@
     { id: 'floco', nome: 'floco' }
   ];
 
-  // 14 vagas [x%, y%] ancoradas pela ARGOLA (translate -50%, -12%)
+  // 15 vagas [x%, y%] ancoradas pela ARGOLA (translate -50%, -12%)
   const POSICOES_ENFEITES = [
     [21, 63], // Vaga 0: Meio-Inferior - ponta esquerda
     [88, 80], // Vaga 1: Base - ponta extrema direita
@@ -112,8 +133,8 @@
     [37, 54], // Vaga 10: Meio-Inferior - alto-esquerda
     [68, 79], // Vaga 11: Base - meio-direita
     [51, 39], // Vaga 12: Meio-Superior - centro
-    [50, 72],  // Vaga 13: Base - centro
-    [30, 28], // Vaga 14: Meio-Superior - ponta esquerda
+    [50, 72], // Vaga 13: Base - centro
+    [30, 28]  // Vaga 14: Meio-Superior - ponta esquerda
   ];
 
   let mensagensRecebidas = [];
@@ -130,6 +151,10 @@
   }
 
   document.getElementById('formRecado').addEventListener('submit', enviarMensagemReal);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') fecharPopupCartao();
+  });
 
   function montarSeletorEnfeites() {
     const fieldset = document.getElementById('containerSeletorEnfeite');
@@ -150,6 +175,16 @@
       tela.classList.remove('ativa');
     });
     document.getElementById(idTela).classList.add('ativa');
+  }
+
+  function trocarAbaMobile(grupo, abaAlvo) {
+    const layoutId = grupo === 'perfil' ? 'layoutPerfil' : 'layoutProtegido';
+    const layout = document.getElementById(layoutId);
+    if (layout) layout.dataset.abaAtiva = abaAlvo;
+
+    document.querySelectorAll('.tab-btn[data-grupo="' + grupo + '"]').forEach(function(btn) {
+      btn.classList.toggle('ativa', btn.dataset.alvo === abaAlvo);
+    });
   }
 
   function formatarDataHora(timestamp) {
@@ -282,16 +317,59 @@
     });
 
     if (enfeiteEl) enfeiteEl.classList.add('destaque-ativo');
-    if (recadoEl) {
-      recadoEl.classList.add('destaque-ativo');
-      recadoEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (recadoEl) recadoEl.classList.add('destaque-ativo');
+  }
+
+  function abrirPopupCartao(mensagem, rotuloAutor) {
+    const overlay = document.getElementById('overlayCartao');
+    const conteudo = document.getElementById('conteudoPopupCartao');
+    const tipo = mensagem.enfeite || 'bola-vermelha';
+    const dataTxt = formatarDataHora(mensagem.criadoEm);
+
+    conteudo.replaceChildren();
+
+    const topo = document.createElement('div');
+    topo.className = 'popup-cartao-topo';
+
+    const selo = document.createElement('span');
+    selo.className = 'popup-cartao-icone';
+    selo.appendChild(criarIconeEnfeite(tipo));
+
+    const info = document.createElement('div');
+    info.className = 'popup-cartao-info';
+
+    const autorEl = document.createElement('strong');
+    autorEl.textContent = rotuloAutor;
+    info.appendChild(autorEl);
+
+    if (dataTxt) {
+      const dataEl = document.createElement('small');
+      dataEl.className = 'popup-cartao-data';
+      dataEl.textContent = dataTxt;
+      info.appendChild(dataEl);
     }
+
+    topo.append(selo, info);
+
+    const corpo = document.createElement('p');
+    corpo.className = 'popup-cartao-corpo';
+    corpo.textContent = mensagem.texto;
+
+    conteudo.append(topo, corpo);
+    overlay.hidden = false;
+  }
+
+  function fecharPopupCartao() {
+    const overlay = document.getElementById('overlayCartao');
+    overlay.hidden = true;
+    document.querySelectorAll('.destaque-ativo').forEach(function(el) {
+      el.classList.remove('destaque-ativo');
+    });
   }
 
   async function marcarComoLida(mensagem, enfeiteEl, recadoEl) {
     if (mensagem.lida) return;
 
-    // Atualiza visualmente na hora (otimista)
     mensagem.lida = true;
     if (enfeiteEl) enfeiteEl.classList.remove('nao-lida');
     if (recadoEl) {
@@ -301,7 +379,6 @@
     }
     atualizarBadgeMenu();
 
-    // Atualiza botão da paginação caso o pontinho de "nova" deva sumir
     renderizarPaginacao(mensagensRecebidas, arvoreAtualRecebidos, 'paginacaoRecebidos', true, function(novaArvore) {
       arvoreAtualRecebidos = novaArvore;
       atualizarTelaRecebidos();
@@ -321,6 +398,8 @@
     const arvore = document.getElementById(arvoreId);
     lista.replaceChildren();
     arvore.replaceChildren();
+
+    const rotuloAutor = eRecebida ? 'De: Seu Anjo' : 'Para: Seu Protegido';
 
     if (todasMensagens.length === 0) {
       lista.innerHTML = '<p><small>Nenhuma mensagem ainda.</small></p>';
@@ -378,9 +457,9 @@
             arvoreAtualEnviados = arvoreDaMsg;
             atualizarTelaEnviados();
           }
-          return;
         }
         destacarPar(mensagem.id, mapaEnfeites[mensagem.id], recado);
+        abrirPopupCartao(mensagem, rotuloAutor);
         if (eRecebida) marcarComoLida(mensagem, mapaEnfeites[mensagem.id], recado);
       };
 
@@ -411,6 +490,7 @@
       enfeite.onclick = function() {
         const recadoAlvo = mapaRecados[mensagem.id];
         destacarPar(mensagem.id, enfeite, recadoAlvo);
+        abrirPopupCartao(mensagem, rotuloAutor);
         if (eRecebida) marcarComoLida(mensagem, enfeite, recadoAlvo);
       };
 
