@@ -65,7 +65,8 @@ button:hover {
   background: #1976d2;
 }
 
-.page-criar .btn-remover {
+.page-criar .btn-remover,
+.page-painel .btn-sair {
   width: auto;
   background: #d32f2f;
 }
@@ -95,7 +96,6 @@ button:hover {
 
 .page-painel .btn-sair {
   float: right;
-  background: #d32f2f;
 }
 
 .page-painel .perfis-container {

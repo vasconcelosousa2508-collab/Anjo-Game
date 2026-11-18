@@ -58,5 +58,5 @@ O sistema foi desenhado para ser o mais fluido e seguro possível, dividindo-se 
 
 * **Frontend:** HTML5, CSS3 estruturado (foco em responsividade, acessibilidade e design acolhedor) e JavaScript Vanilla (puro) para manipulação de estado e interações na tela.
 * **Backend:** **Node.js** com **Express** para gerenciamento de rotas, controle das salas de jogo e execução da lógica segura do sorteio.
-* **Banco de Dados & Realtime:** **Firebase (Firestore / Realtime Database)** para armazenar o estado do jogo e atualizar as ações dos jogadores instantaneamente sem necessidade de atualizar a página.
+* **Banco de Dados & Websockets:** **Firebase (Firestore / Socket.io)** para armazenar o estado do jogo e atualizar as ações dos jogadores instantaneamente sem necessidade de atualizar a página.
 * **Hospedagem/Deploy (Planejado):** **Netlify** (para o Frontend) e **Render** (para o backend em Node.js).
