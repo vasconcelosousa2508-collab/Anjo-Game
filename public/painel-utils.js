@@ -2,13 +2,16 @@ window.PainelUtils = (function() {
   const ENFEITE_PADRAO = 'bola-vermelha';
 
   const CATALOGO_ENFEITES = [
+    { id: 'floco', nome: 'floco' },
+
     { id: 'bola-amarela', nome: 'bola amarela' },
-    // { id: 'bola-azul', nome: 'bola azul' },
     { id: 'bola-laranja', nome: 'bola laranja' },
     { id: 'bola-roxa', nome: 'bola roxa' },
     { id: 'bola-verde', nome: 'bola verde' },
-    { id: 'bola-vermelha', nome: 'bola vermelha' },
-    { id: 'floco', nome: 'floco' }
+    { id: 'bola-vermelha', nome: 'bola vermelha' },    
+
+    { id: 'bengala-azul', nome: 'bengala azul' },
+    { id: 'bengala-vermelha', nome: 'bengala vermelha' },
   ];
 
   const POSICOES_ENFEITES = [
