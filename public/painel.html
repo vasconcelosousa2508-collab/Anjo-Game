@@ -28,10 +28,12 @@
 
   <!-- TELA 2: MEU PERFIL -->
   <div id="telaMeuPerfil" class="tela">
-    <button onclick="navegarPara('telaMenu')">Voltar</button>
-    <h2>Meu Perfil</h2>
-    <div class="card">
-      <p><strong>Nome:</strong> <span id="perfilNome">...</span></p>
+    <div class="mobile-topo">
+      <button onclick="navegarPara('telaMenu')">Voltar</button>
+      <h2>Meu Perfil</h2>
+      <div class="card">
+        <p><strong>Nome:</strong> <span id="perfilNome">...</span></p>
+      </div>
     </div>
 
     <div class="mobile-tabs">
@@ -41,27 +43,38 @@
 
     <div class="arvore-msg-layout" id="layoutPerfil" data-aba-ativa="arvore">
       <div class="arvore-coluna painel-aba" data-aba="arvore">
+        <div class="desktop-topo">
+          <button onclick="navegarPara('telaMenu')">Voltar</button>
+          <h2>Meu Perfil</h2>
+          <div class="card">
+            <p><strong>Nome:</strong> <span id="perfilNomeDesktop">...</span></p>
+          </div>
+        </div>
+
         <div id="paginacaoRecebidos" class="paginacao-arvores"></div>
-        <div class="arvore-demo">
+        <div class="arvore-demo" id="areaSwipeRecebidos">
           <img src="/assets/arvore-natal.svg" alt="Árvore de Natal">
           <div class="arvore-enfeites" id="arvoreRecebidos"></div>
         </div>
         <p class="dica-arvore"><small>Toque em um enfeite para abrir a mensagem</small></p>
         <button type="button" onclick="baixarRecordacaoPDF()">Baixar Recordação (PDF)</button>
       </div>
-      <div class="card mensagens-card painel-aba" data-aba="lista">
+
+      <div class="mensagens-card painel-aba" data-aba="lista">
         <h3>Mensagens Recebidas</h3>
-        <div id="listaRecebidas"></div>
+        <div id="listaRecebidas" class="grade-recados"></div>
       </div>
     </div>
   </div>
 
   <!-- TELA 3: PROTEGIDO -->
   <div id="telaProtegido" class="tela">
-    <button onclick="navegarPara('telaMenu')">Voltar</button>
-    <h2>Seu Protegido</h2>
-    <div class="card">
-      <p><strong>Amigo Secreto:</strong> <span id="nomeProtegido">Carregando...</span></p>
+    <div class="mobile-topo">
+      <button onclick="navegarPara('telaMenu')">Voltar</button>
+      <h2>Seu Protegido</h2>
+      <div class="card">
+        <p><strong>Amigo Secreto:</strong> <span id="nomeProtegido">Carregando...</span></p>
+      </div>
     </div>
 
     <div class="mobile-tabs">
@@ -71,13 +84,22 @@
 
     <div class="arvore-msg-layout" id="layoutProtegido" data-aba-ativa="decorar">
       <div class="arvore-coluna painel-aba" data-aba="arvore">
+        <div class="desktop-topo">
+          <button onclick="navegarPara('telaMenu')">Voltar</button>
+          <h2>Seu Protegido</h2>
+          <div class="card">
+            <p><strong>Amigo Secreto:</strong> <span id="nomeProtegidoDesktop">Carregando...</span></p>
+          </div>
+        </div>
+
         <div id="paginacaoEnviados" class="paginacao-arvores"></div>
-        <div class="arvore-demo">
+        <div class="arvore-demo" id="areaSwipeEnviados">
           <img src="/assets/arvore-natal.svg" alt="Árvore de Natal do seu protegido">
           <div class="arvore-enfeites" id="arvoreEnviados"></div>
         </div>
         <p class="dica-arvore"><small>Toque em um enfeite para localizar o recado</small></p>
       </div>
+
       <div class="mensagens-card painel-aba" data-aba="decorar">
         <div class="card">
           <h3>Enviar Mensagem Anônima</h3>
@@ -90,9 +112,10 @@
             <p id="statusRecado" role="status"></p>
           </form>
         </div>
-        <div class="card">
+
+        <div class="secao-enviadas">
           <h3>Últimas Mensagens Enviadas</h3>
-          <div id="listaEnviadas"></div>
+          <div id="listaEnviadas" class="grade-recados"></div>
         </div>
       </div>
     </div>
@@ -107,7 +130,6 @@
   </div>
 
 <script src="/socket.io/socket.io.js"></script>
-
 <script src="/painel.js"></script>
 </body>
 </html>

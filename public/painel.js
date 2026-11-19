@@ -42,6 +42,24 @@ if (!participanteId || sessionStorage.getItem('participanteId') !== participante
   montarSeletorEnfeites();
   carregarDados();
   conectarTempoReal();
+
+  ativarSwipeArvore('areaSwipeRecebidos', function(direcao) {
+    const total = obterMaiorArvore(mensagensRecebidas);
+    const proxima = arvoreAtualRecebidos + direcao;
+    if (proxima >= 1 && proxima <= total) {
+      arvoreAtualRecebidos = proxima;
+      atualizarTelaRecebidos();
+    }
+  });
+
+  ativarSwipeArvore('areaSwipeEnviados', function(direcao) {
+    const total = obterMaiorArvore(mensagensEnviadas);
+    const proxima = arvoreAtualEnviados + direcao;
+    if (proxima >= 1 && proxima <= total) {
+      arvoreAtualEnviados = proxima;
+      atualizarTelaEnviados();
+    }
+  });
 }
 
 document.getElementById('formRecado').addEventListener('submit', enviarMensagemReal);
@@ -98,15 +116,14 @@ async function carregarDados() {
     if (resposta.ok) {
       document.getElementById('nomeJogador').textContent = dados.nome;
       document.getElementById('perfilNome').textContent = dados.nome || 'Não informado';
+      document.getElementById('perfilNomeDesktop').textContent = dados.nome || 'Não informado';
     }
 
     const respostaProtegido = await fetch('/api/participantes/' + participanteId + '/protegido');
     const protegido = await respostaProtegido.json();
-    if (respostaProtegido.ok && protegido.nome) {
-      document.getElementById('nomeProtegido').textContent = protegido.nome;
-    } else {
-      document.getElementById('nomeProtegido').textContent = protegido.erro || 'Não definido';
-    }
+    const nomeProt = (respostaProtegido.ok && protegido.nome) ? protegido.nome : (protegido.erro || 'Não definido');
+    document.getElementById('nomeProtegido').textContent = nomeProt;
+    document.getElementById('nomeProtegidoDesktop').textContent = nomeProt;
 
     await carregarMensagens();
   } catch (err) {
@@ -138,6 +155,29 @@ function conectarTempoReal() {
       atualizarTelaRecebidos();
     }
   });
+}
+
+function ativarSwipeArvore(elementoId, aoDeslizar) {
+  const el = document.getElementById(elementoId);
+  if (!el) return;
+  let inicioX = 0;
+  let inicioY = 0;
+
+  el.addEventListener('touchstart', function(e) {
+    if (e.touches.length !== 1) return;
+    inicioX = e.touches[0].clientX;
+    inicioY = e.touches[0].clientY;
+  }, { passive: true });
+
+  el.addEventListener('touchend', function(e) {
+    if (e.changedTouches.length !== 1) return;
+    const deltaX = e.changedTouches[0].clientX - inicioX;
+    const deltaY = e.changedTouches[0].clientY - inicioY;
+
+    if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      aoDeslizar(deltaX < 0 ? 1 : -1);
+    }
+  }, { passive: true });
 }
 
 function obterMaiorArvore(mensagens) {
@@ -203,24 +243,35 @@ function renderizarPaginacao(mensagens, arvoreSelecionada, containerId, checarNa
   const totalArvores = obterMaiorArvore(mensagens);
   if (totalArvores <= 1) return;
 
-  for (let i = 1; i <= totalArvores; i++) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
+  const btnAnt = document.createElement('button');
+  btnAnt.type = 'button';
+  btnAnt.className = 'btn-seta-arvore';
+  btnAnt.textContent = '<';
+  btnAnt.setAttribute('aria-label', 'Árvore anterior');
+  btnAnt.disabled = arvoreSelecionada <= 1;
+  btnAnt.onclick = function() {
+    if (arvoreSelecionada > 1) aoTrocar(arvoreSelecionada - 1);
+  };
 
-    const temNovaNaArvore = checarNaoLidas && mensagens.some(function(m) {
-      return (m.arvoreNumero || 1) === i && !m.lida;
-    });
+  const temNovaEmOutra = checarNaoLidas && mensagens.some(function(m) {
+    return (m.arvoreNumero || 1) !== arvoreSelecionada && !m.lida;
+  });
 
-    btn.textContent = 'Árvore ' + i + (temNovaNaArvore ? ' •' : '');
-    btn.className = 'btn-arvore' +
-      (i === arvoreSelecionada ? ' ativa' : '') +
-      (temNovaNaArvore ? ' tem-nova' : '');
+  const indicador = document.createElement('span');
+  indicador.className = 'contador-arvore' + (temNovaEmOutra ? ' tem-nova' : '');
+  indicador.textContent = arvoreSelecionada + '/' + totalArvores;
 
-    btn.onclick = function() {
-      aoTrocar(i);
-    };
-    container.appendChild(btn);
-  }
+  const btnProx = document.createElement('button');
+  btnProx.type = 'button';
+  btnProx.className = 'btn-seta-arvore';
+  btnProx.textContent = '>';
+  btnProx.setAttribute('aria-label', 'Próxima árvore');
+  btnProx.disabled = arvoreSelecionada >= totalArvores;
+  btnProx.onclick = function() {
+    if (arvoreSelecionada < totalArvores) aoTrocar(arvoreSelecionada + 1);
+  };
+
+  container.append(btnAnt, indicador, btnProx);
 }
 
 function criarIconeEnfeite(tipo) {
