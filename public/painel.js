@@ -1,34 +1,8 @@
 const params = new URLSearchParams(window.location.search);
 const participanteId = params.get('id');
 
-const CATALOGO_ENFEITES = [
-  { id: 'bola-amarela', nome: 'bola amarela' },
-  { id: 'bola-azul', nome: 'bola azul' },
-  { id: 'bola-laranja', nome: 'bola laranja' },
-  { id: 'bola-roxa', nome: 'bola roxa' },
-  { id: 'bola-verde', nome: 'bola verde' },
-  { id: 'bola-vermelha', nome: 'bola vermelha' },
-  { id: 'floco', nome: 'floco' }
-];
-
-// 15 vagas [x%, y%] ancoradas pela ARGOLA (translate -50%, -12%)
-const POSICOES_ENFEITES = [
-  [21, 63], // Vaga 0: Meio-Inferior - ponta esquerda
-  [88, 80], // Vaga 1: Base - ponta extrema direita
-  [45, 22], // Vaga 2: Topo - meio-esquerda
-  [12, 80], // Vaga 3: Base - ponta extrema esquerda
-  [76, 45], // Vaga 4: Meio-Superior - ponta direita
-  [54, 59], // Vaga 5: Meio-Inferior - miolo direita
-  [24, 44], // Vaga 6: Meio-Superior - ponta esquerda
-  [82, 62], // Vaga 7: Meio-Inferior - ponta direita
-  [32, 77], // Vaga 8: Base - miolo esquerda
-  [65, 30], // Vaga 9: Topo - direita
-  [37, 54], // Vaga 10: Meio-Inferior - alto-esquerda
-  [68, 79], // Vaga 11: Base - meio-direita
-  [51, 39], // Vaga 12: Meio-Superior - centro
-  [50, 72], // Vaga 13: Base - centro
-  [30, 28]  // Vaga 14: Meio-Superior - ponta esquerda
-];
+const PainelUtils = window.PainelUtils;
+const CATALOGO_ENFEITES = PainelUtils.CATALOGO_ENFEITES;
 
 let mensagensRecebidas = [];
 let mensagensEnviadas = [];
@@ -44,7 +18,7 @@ if (!participanteId || sessionStorage.getItem('participanteId') !== participante
   conectarTempoReal();
 
   ativarSwipeArvore('areaSwipeRecebidos', function(direcao) {
-    const total = obterMaiorArvore(mensagensRecebidas);
+    const total = PainelUtils.obterMaiorArvore(mensagensRecebidas);
     const proxima = arvoreAtualRecebidos + direcao;
     if (proxima >= 1 && proxima <= total) {
       arvoreAtualRecebidos = proxima;
@@ -53,7 +27,7 @@ if (!participanteId || sessionStorage.getItem('participanteId') !== participante
   });
 
   ativarSwipeArvore('areaSwipeEnviados', function(direcao) {
-    const total = obterMaiorArvore(mensagensEnviadas);
+    const total = PainelUtils.obterMaiorArvore(mensagensEnviadas);
     const proxima = arvoreAtualEnviados + direcao;
     if (proxima >= 1 && proxima <= total) {
       arvoreAtualEnviados = proxima;
@@ -120,16 +94,6 @@ function trocarAbaMobile(grupo, abaAlvo) {
   });
 }
 
-function formatarDataHora(timestamp) {
-  if (!timestamp) return '';
-  const data = new Date(timestamp);
-  const dia = String(data.getDate()).padStart(2, '0');
-  const mes = String(data.getMonth() + 1).padStart(2, '0');
-  const hora = String(data.getHours()).padStart(2, '0');
-  const min = String(data.getMinutes()).padStart(2, '0');
-  return dia + '/' + mes + ' às ' + hora + ':' + min;
-}
-
 async function carregarDados() {
   try {
     const resposta = await fetch('/api/participantes/' + participanteId);
@@ -163,7 +127,7 @@ function conectarTempoReal() {
   socket.on('nova_mensagem', function(novaMsg) {
     if (mensagensRecebidas.some(function(m) { return m.id === novaMsg.id; })) return;
     mensagensRecebidas.push(novaMsg);
-    arvoreAtualRecebidos = obterMaiorArvore(mensagensRecebidas);
+    arvoreAtualRecebidos = PainelUtils.obterMaiorArvore(mensagensRecebidas);
     atualizarBadgeMenu();
     atualizarTelaRecebidos();
   });
@@ -201,14 +165,6 @@ function ativarSwipeArvore(elementoId, aoDeslizar) {
   }, { passive: true });
 }
 
-function obterMaiorArvore(mensagens) {
-  if (!mensagens || mensagens.length === 0) return 1;
-  return mensagens.reduce(function(max, msg) {
-    const num = msg.arvoreNumero || 1;
-    return num > max ? num : max;
-  }, 1);
-}
-
 function atualizarBadgeMenu() {
   const badge = document.getElementById('badgeMenuNovas');
   const naoLidas = mensagensRecebidas.filter(function(m) { return !m.lida; }).length;
@@ -229,8 +185,8 @@ async function carregarMensagens() {
       mensagensRecebidas = dados.recebidas || [];
       mensagensEnviadas = dados.enviadas || [];
 
-      arvoreAtualRecebidos = obterMaiorArvore(mensagensRecebidas);
-      arvoreAtualEnviados = obterMaiorArvore(mensagensEnviadas);
+      arvoreAtualRecebidos = PainelUtils.obterMaiorArvore(mensagensRecebidas);
+      arvoreAtualEnviados = PainelUtils.obterMaiorArvore(mensagensEnviadas);
 
       atualizarBadgeMenu();
       atualizarTelaRecebidos();
@@ -261,7 +217,7 @@ function renderizarPaginacao(mensagens, arvoreSelecionada, containerId, checarNa
   const container = document.getElementById(containerId);
   container.replaceChildren();
 
-  const totalArvores = obterMaiorArvore(mensagens);
+  const totalArvores = PainelUtils.obterMaiorArvore(mensagens);
   if (totalArvores <= 1) return;
 
   const btnAnt = document.createElement('button');
@@ -296,7 +252,7 @@ function renderizarPaginacao(mensagens, arvoreSelecionada, containerId, checarNa
 }
 
 function criarIconeEnfeite(tipo) {
-  const nomeArquivo = (tipo === 'bola') ? 'bola-vermelha' : tipo;
+  const nomeArquivo = PainelUtils.normalizarTipoEnfeite(tipo);
   const img = document.createElement('img');
   img.src = '/assets/' + nomeArquivo + '.svg';
   img.alt = nomeArquivo;
@@ -315,8 +271,8 @@ function destacarPar(mensagemId, enfeiteEl, recadoEl) {
 function abrirPopupCartao(mensagem, rotuloAutor) {
   const overlay = document.getElementById('overlayCartao');
   const conteudo = document.getElementById('conteudoPopupCartao');
-  const tipo = mensagem.enfeite || 'bola-vermelha';
-  const dataTxt = formatarDataHora(mensagem.criadoEm);
+  const tipo = PainelUtils.normalizarTipoEnfeite(mensagem.enfeite);
+  const dataTxt = PainelUtils.formatarDataHora(mensagem.criadoEm);
 
   conteudo.replaceChildren();
 
@@ -400,12 +356,12 @@ function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreI
 
   const mapaRecados = {};
   const mapaEnfeites = {};
-  const totalArvores = obterMaiorArvore(todasMensagens);
+  const totalArvores = PainelUtils.obterMaiorArvore(todasMensagens);
 
   // 1. Renderiza TODAS as mensagens juntas (mais recentes primeiro)
   const listaOrdenada = [...todasMensagens].reverse();
   listaOrdenada.forEach(function(mensagem) {
-    const tipo = mensagem.enfeite || 'bola-vermelha';
+    const tipo = PainelUtils.normalizarTipoEnfeite(mensagem.enfeite);
     const naoLida = eRecebida && !mensagem.lida;
 
     const recado = document.createElement('div');
@@ -425,7 +381,7 @@ function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreI
 
     const meta = document.createElement('small');
     meta.className = 'recado-meta';
-    const dataTxt = formatarDataHora(mensagem.criadoEm);
+    const dataTxt = PainelUtils.formatarDataHora(mensagem.criadoEm);
     const arvoreTxt = totalArvores > 1 ? ' • Árvore ' + (mensagem.arvoreNumero || 1) : '';
     meta.textContent = dataTxt + arvoreTxt;
 
@@ -465,9 +421,8 @@ function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreI
   });
 
   mensagensDaArvore.forEach(function(mensagem, indice) {
-    const tipo = mensagem.enfeite || 'bola-vermelha';
-    const vaga = (typeof mensagem.posicao === 'number') ? mensagem.posicao : indice;
-    const posicao = POSICOES_ENFEITES[vaga % POSICOES_ENFEITES.length];
+    const tipo = PainelUtils.normalizarTipoEnfeite(mensagem.enfeite);
+    const posicao = PainelUtils.obterPosicaoEnfeite(mensagem, indice);
     const naoLida = eRecebida && !mensagem.lida;
 
     const enfeite = document.createElement('button');
@@ -528,193 +483,4 @@ function sair() {
   sessionStorage.removeItem('participanteId');
   sessionStorage.removeItem('familiaId');
   window.location.href = idFamiliaSalvo ? '/jogo.html?id=' + idFamiliaSalvo : '/';
-}
-
-function carregarImagemParaCanvas(src) {
-  return new Promise(function(resolve, reject) {
-    const img = new Image();
-    img.onload = function() { resolve(img); };
-    img.onerror = reject;
-    img.src = src;
-  });
-}
-
-async function gerarDataUrlEnfeite(tipo) {
-  const nomeArquivo = (tipo === 'bola') ? 'bola-vermelha' : (tipo || 'bola-vermelha');
-  const img = await carregarImagemParaCanvas('/assets/' + nomeArquivo + '.svg');
-  const canvas = document.createElement('canvas');
-  canvas.width = 72;
-  canvas.height = 86;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0, 72, 86);
-  return canvas.toDataURL('image/png');
-}
-
-async function gerarDataUrlArvore(mensagensDaArvore, imgArvore) {
-  const largura = 560;
-  const proporcao = (imgArvore.naturalHeight || 1000) / (imgArvore.naturalWidth || 840);
-  const altura = Math.round(largura * proporcao);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = largura;
-  canvas.height = altura;
-  const ctx = canvas.getContext('2d');
-
-  ctx.drawImage(imgArvore, 0, 0, largura, altura);
-
-  const larguraEnfeite = largura * (36 / 280);
-  const alturaEnfeite = larguraEnfeite * (43 / 36);
-
-  for (let i = 0; i < mensagensDaArvore.length; i++) {
-    const mensagem = mensagensDaArvore[i];
-    const tipo = (mensagem.enfeite === 'bola') ? 'bola-vermelha' : (mensagem.enfeite || 'bola-vermelha');
-    const vaga = (typeof mensagem.posicao === 'number') ? mensagem.posicao : i;
-    const posicao = POSICOES_ENFEITES[vaga % POSICOES_ENFEITES.length];
-
-    const imgEnfeite = await carregarImagemParaCanvas('/assets/' + tipo + '.svg');
-    const x = (posicao[0] / 100) * largura - (larguraEnfeite * 0.5);
-    const y = (posicao[1] / 100) * altura - (alturaEnfeite * 0.12);
-
-    ctx.drawImage(imgEnfeite, x, y, larguraEnfeite, alturaEnfeite);
-  }
-
-  return {
-    dataUrl: canvas.toDataURL('image/png'),
-    proporcao: proporcao
-  };
-}
-
-async function baixarRecordacaoPDF() {
-  if (!mensagensRecebidas || mensagensRecebidas.length === 0) {
-    alert('Ainda não há mensagens recebidas para gerar a recordação.');
-    return;
-  }
-
-  try {
-    const { jsPDF } = window.jspdf;
-    // Página A4 em Paisagem (297mm x 210mm) igual ao seu modelo
-    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-    const larguraPagina = 297;
-    const alturaPagina = 210;
-    const margemX = 14;
-    const topoTituloY = 16;
-
-    const nomePessoa = document.getElementById('perfilNome').textContent.trim() || 'Amigo';
-    const titulo = nomePessoa + ', lembre como você foi amado esse ano:';
-
-    const imgArvore = await carregarImagemParaCanvas('/assets/arvore-natal.svg');
-    const cacheIcones = {};
-    const totalArvores = obterMaiorArvore(mensagensRecebidas);
-
-    // Pré-renderiza todas as árvores recebidas
-    const arvoresRenderizadas = [];
-    for (let num = 1; num <= totalArvores; num++) {
-      const msgsArvore = mensagensRecebidas.filter(function(m) {
-        return (m.arvoreNumero || 1) === num;
-      });
-      const render = await gerarDataUrlArvore(msgsArvore, imgArvore);
-      arvoresRenderizadas.push(render);
-    }
-
-    // Configuração da grade de cartões (5 colunas lado a lado)
-    const numColunas = 5;
-    const gapColuna = 4;
-    const gapLinha = 3.5;
-    const areaUtilX = larguraPagina - margemX * 2;
-    const larguraCartao = (areaUtilX - gapColuna * (numColunas - 1)) / numColunas;
-
-    // Configuração das árvores lado a lado (até 4 por linha)
-    const maxArvoresPorLinha = 4;
-    const alturaArvoreMM = 56;
-    const larguraArvoreMM = alturaArvoreMM / arvoresRenderizadas[0].proporcao;
-    const gapArvore = 12;
-
-    let indiceArvore = 0;
-    let indiceMsg = 0;
-    let numeroPagina = 0;
-
-    while (indiceMsg < mensagensRecebidas.length || indiceArvore < arvoresRenderizadas.length) {
-      if (numeroPagina > 0) doc.addPage();
-      numeroPagina++;
-
-      // Título no topo de cada página
-      doc.setFontSize(14);
-      doc.setTextColor(35, 35, 35);
-      doc.text(titulo, margemX, topoTituloY);
-
-      let inicioCartoesY = 24;
-
-      // Se ainda houver árvores, desenha uma fileira lado a lado no topo
-      if (indiceArvore < arvoresRenderizadas.length) {
-        const qtdNestaLinha = Math.min(maxArvoresPorLinha, arvoresRenderizadas.length - indiceArvore);
-        const larguraTotalFileira = qtdNestaLinha * larguraArvoreMM + (qtdNestaLinha - 1) * gapArvore;
-        let xArvore = (larguraPagina - larguraTotalFileira) / 2;
-        const yArvore = 22;
-
-        for (let a = 0; a < qtdNestaLinha; a++) {
-          doc.addImage(arvoresRenderizadas[indiceArvore].dataUrl, 'PNG', xArvore, yArvore, larguraArvoreMM, alturaArvoreMM);
-          xArvore += larguraArvoreMM + gapArvore;
-          indiceArvore++;
-        }
-
-        inicioCartoesY = yArvore + alturaArvoreMM + 7;
-      }
-
-      // Preenche as 5 colunas de cartõezinhos (alvenaria / masonry) até o fim da página
-      const limiteInferiorY = alturaPagina - 12;
-
-      for (let col = 0; col < numColunas; col++) {
-        if (indiceMsg >= mensagensRecebidas.length) break;
-
-        const xCartao = margemX + col * (larguraCartao + gapColuna);
-        let cursorY = inicioCartoesY;
-
-        while (indiceMsg < mensagensRecebidas.length) {
-          const msg = mensagensRecebidas[indiceMsg];
-          const tipo = msg.enfeite || 'bola-vermelha';
-          if (!cacheIcones[tipo]) {
-            cacheIcones[tipo] = await gerarDataUrlEnfeite(tipo);
-          }
-
-          const larguraTexto = larguraCartao - 12;
-          doc.setFontSize(7.5);
-          const linhasTexto = doc.splitTextToSize(msg.texto, larguraTexto);
-          const alturaCartao = Math.max(13, 8 + linhasTexto.length * 3.4);
-
-          // Se não couber nesta coluna, passa para a próxima coluna
-          if (cursorY + alturaCartao > limiteInferiorY) {
-            break;
-          }
-
-          // Cardzinho
-          doc.setDrawColor(218, 228, 222);
-          doc.setFillColor(248, 251, 249);
-          doc.roundedRect(xCartao, cursorY, larguraCartao, alturaCartao, 1.8, 1.8, 'FD');
-
-          // Ícone do enfeite
-          doc.addImage(cacheIcones[tipo], 'PNG', xCartao + 2.2, cursorY + 2.5, 5.5, 6.5);
-
-          // Meta (Seu Anjo • data)
-          doc.setFontSize(6.2);
-          doc.setTextColor(130, 130, 130);
-          const metaTxt = 'Seu Anjo • ' + formatarDataHora(msg.criadoEm);
-          doc.text(metaTxt, xCartao + 9.2, cursorY + 5);
-
-          // Texto completo da mensagem
-          doc.setFontSize(7.5);
-          doc.setTextColor(35, 35, 35);
-          doc.text(linhasTexto, xCartao + 9.2, cursorY + 8.8);
-
-          cursorY += alturaCartao + gapLinha;
-          indiceMsg++;
-        }
-      }
-    }
-
-    const slug = nomePessoa.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    doc.save('recordacao-anjo-' + slug + '.pdf');
-  } catch (err) {
-    console.error('Erro ao gerar PDF de recordação:', err);
-    alert('Não foi possível gerar o PDF de recordação.');
-  }
 }
