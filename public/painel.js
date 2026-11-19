@@ -70,16 +70,37 @@ document.addEventListener('keydown', function(e) {
 
 function montarSeletorEnfeites() {
   const fieldset = document.getElementById('containerSeletorEnfeite');
+  const grade = document.createElement('div');
+  grade.className = 'grade-enfeites';
+
   CATALOGO_ENFEITES.forEach(function(item, index) {
     const label = document.createElement('label');
-    const checked = index === 0 ? 'checked' : '';
-    label.innerHTML =
-      '<input type="radio" name="enfeite" value="' + item.id + '" ' + checked + '>' +
-      '<span class="selo-enfeite enfeite-' + item.id + '">' +
-      '<img src="/assets/' + item.id + '.svg" alt="">' +
-      '</span> ' + item.nome;
-    fieldset.appendChild(label);
+    label.className = 'opcao-enfeite';
+    label.title = item.nome;
+
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = 'enfeite';
+    input.value = item.id;
+    if (index === 0) input.checked = true;
+
+    const caixa = document.createElement('span');
+    caixa.className = 'caixa-enfeite';
+
+    const icone = document.createElement('img');
+    icone.src = '/assets/' + item.id + '.svg';
+    icone.alt = item.nome;
+    caixa.appendChild(icone);
+
+    const legenda = document.createElement('span');
+    legenda.className = 'legenda-enfeite';
+    legenda.textContent = item.nome;
+
+    label.append(input, caixa, legenda);
+    grade.appendChild(label);
   });
+
+  fieldset.appendChild(grade);
 }
 
 function navegarPara(idTela) {
