@@ -12,6 +12,10 @@ window.PainelUtils = (function() {
 
     { id: 'bengala-azul', nome: 'bengala azul' },
     { id: 'bengala-vermelha', nome: 'bengala vermelha' },
+    { id: 'bengala-amarela', nome: 'bengala amarela' },
+    { id: 'bengala-laranja', nome: 'bengala laranja' },
+    { id: 'bengala-verde', nome: 'bengala verde' },
+    { id: 'bengala-roxa', nome: 'bengala roxa' }
   ];
 
   const POSICOES_ENFEITES = [

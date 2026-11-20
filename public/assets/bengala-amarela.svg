@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 64" width="40" height="64">
+  <defs>
+    <clipPath id="bengala-shape-ouro">
+      <path d="M 5,21 L 5,18 A 13,13 0 0,1 31,18 L 31,55 A 4.5,4.5 0 0,1 22,55 L 22,18 A 4,4 0 0,0 14,18 L 14,21 A 4.5,4.5 0 0,1 5,21 Z" />
+    </clipPath>
+    <clipPath id="bengala-luz-ouro"><rect x="0" y="0" width="26.5" height="64" /></clipPath>
+    <clipPath id="bengala-sombra-ouro"><rect x="26.5" y="0" width="15" height="64" /></clipPath>
+    <g id="listras-ouro">
+      <polygon points="2,18 18,18 18,27 2,27" />
+      <polygon points="18,18 4,10 10,3" />
+      <polygon points="18,18 26,3 32,10" />
+      <polygon points="20,28 33,15 33,22 20,35" />
+      <polygon points="20,41 33,28 33,35 20,48" />
+      <polygon points="20,54 33,41 33,48 20,61" />
+    </g>
+  </defs>
+  <g clip-path="url(#bengala-shape-ouro)">
+    <g clip-path="url(#bengala-luz-ouro)">
+      <rect width="40" height="64" fill="#F8FAFC" />
+      <use href="#listras-ouro" fill="#FFD200" />
+    </g>
+    <g clip-path="url(#bengala-sombra-ouro)">
+      <rect width="40" height="64" fill="#CBD5E1" />
+      <use href="#listras-ouro" fill="#CC8B00" />
+    </g>
+  </g>
+</svg>
