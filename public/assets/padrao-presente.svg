@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <g fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.22">
+    
+    <g transform="translate(28, 28)">
+      <line x1="0" y1="-12" x2="0" y2="12" />
+      <line x1="-10.4" y1="-6" x2="10.4" y2="6" />
+      <line x1="-10.4" y1="6" x2="10.4" y2="-6" />
+      <polyline points="-3,-9 0,-6 3,-9" />
+      <polyline points="-3,9 0,6 3,9" />
+      <polyline points="-9,-2 -6,-3.5 -6,-7" />
+      <polyline points="9,2 6,3.5 6,7" />
+    </g>
+
+    
+    <g transform="translate(88, 30)">
+      <rect x="-10" y="-6" width="20" height="16" rx="2" />
+      <rect x="-12" y="-10" width="24" height="4" rx="1" />
+      <line x1="0" y1="-10" x2="0" y2="10" />
+      <path d="M0,-10 C-4,-16 -9,-13 -5,-10 Z" />
+      <path d="M0,-10 C4,-16 9,-13 5,-10 Z" />
+    </g>
+
+    
+    <g transform="translate(30, 88)">
+      <polygon points="0,-13 -10,-1 -5,-1 -12,8 12,8 5,-1 10,-1" />
+      <line x1="0" y1="8" x2="0" y2="13" />
+    </g>
+
+    
+    <g transform="translate(88, 88)">
+      <polygon points="0,-11 3,-3 11,-3 4.5,2 7,10 0,5 -7,10 -4.5,2 -11,-3 -3,-3" />
+    </g>
+
+    
+    <circle cx="58" cy="14" r="1.4" fill="#ffffff" stroke="none" />
+    <circle cx="14" cy="58" r="1.4" fill="#ffffff" stroke="none" />
+    <circle cx="60" cy="60" r="1.8" fill="#ffffff" stroke="none" />
+    <circle cx="106" cy="62" r="1.4" fill="#ffffff" stroke="none" />
+    <circle cx="60" cy="106" r="1.4" fill="#ffffff" stroke="none" />
+  </g>
+</svg>

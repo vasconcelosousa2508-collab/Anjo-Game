@@ -9,19 +9,29 @@
 </head>
 <body class="page-painel">
   <!-- TELA 1: MENU PRINCIPAL -->
-  <div id="telaMenu" class="tela ativa">
-    <button class="btn-sair" onclick="sair()">Sair</button>
-    <h2>Painel do Jogo</h2>
-    <p>Olá, <span id="nomeJogador">Carregando...</span>!</p>
+  <div id="telaMenu" class="tela ativa tema-presente">
+    <div class="menu-presente-conteudo">
+      <header class="menu-topo">
+        <div class="menu-saudacao">
+          <h2>Painel do Jogo</h2>
+          <p>Olá, <span id="nomeJogador">Carregando...</span>!</p>
+        </div>
+        <button class="btn-sair caixa-vidro-vinho" onclick="sair()">Sair</button>
+      </header>
 
-    <div class="perfis-container">
-      <div class="perfil-card" onclick="navegarPara('telaMeuPerfil')">
-        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=MeuPerfil" class="avatar-circulo" alt="">
-        <p><strong>Meu Perfil</strong> <span id="badgeMenuNovas" class="badge-novas" hidden></span></p>
-      </div>
-      <div class="perfil-card" onclick="navegarPara('telaProtegido')">
-        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Protegido" class="avatar-circulo" alt="">
-        <p><strong>Protegido</strong></p>
+      <div class="perfis-container">
+        <div class="perfil-card caixa-vidro-vinho" onclick="navegarPara('telaMeuPerfil')">
+          <img src="/assets/icone-voce.svg" class="avatar-circulo" alt="Você">
+          <p class="perfil-rotulo">
+            <strong>VOCÊ</strong>
+            <span id="badgeMenuNovas" class="badge-novas" hidden></span>
+          </p>
+        </div>
+
+        <div class="perfil-card caixa-vidro-vinho" onclick="navegarPara('telaProtegido')">
+          <img src="/assets/icone-protegido.svg" class="avatar-circulo" alt="Seu Protegido">
+          <p class="perfil-rotulo"><strong>SEU PROTEGIDO</strong></p>
+        </div>
       </div>
     </div>
   </div>

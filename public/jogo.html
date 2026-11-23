@@ -2,22 +2,24 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Anjo - Login no Jogo</title>
   <link rel="stylesheet" href="/style.css">
 </head>
-<body class="page-jogo">
-
-  <h2>Bem-vindo ao Anjo! </h2>
-  <p>Digite seu código de acesso individual:</p>
-  <input type="text" id="codigoAcesso" placeholder="Ex: MARIA-8A9X">
-  <button onclick="entrarNoJogo()">Acessar Meu Painel</button>
+<body class="page-jogo tema-presente">
+  <div class="cartao-entrada caixa-vidro-vinho">
+    <h2>Bem-vindo ao Anjo!</h2>
+    <p>Digite seu código de acesso individual:</p>
+    <input type="text" id="codigoAcesso" placeholder="Ex: MARIA-8A9X">
+    <button type="button" class="btn-principal-presente" onclick="entrarNoJogo()">Acessar Meu Painel</button>
+  </div>
 
   <script>
   const params = new URLSearchParams(window.location.search);
   const familiaId = params.get('id');
 
   if (!familiaId) {
-    document.body.innerHTML = '<h3>Erro: Link da família inválido!</h3>';
+    document.body.innerHTML = '<div class="cartao-entrada caixa-vidro-vinho"><h3>Erro: Link da família inválido!</h3></div>';
   }
 
   async function entrarNoJogo() {
@@ -25,7 +27,7 @@
 
     if (!codigo) {
       alert('Digite seu código!');
-      return;9
+      return;
     }
 
     try {
@@ -38,7 +40,6 @@
       const dados = await resposta.json();
 
       if (resposta.ok) {
-        // Guarda o ID do participante E o ID da família no sessionStorage
         sessionStorage.setItem('participanteId', dados.id);
         sessionStorage.setItem('familiaId', familiaId);
         

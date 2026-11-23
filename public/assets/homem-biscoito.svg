@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 46 56" width="46" height="56">
+  <defs>
+    
+    <clipPath id="biscoito-esq">
+      <rect x="0" y="0" width="23" height="56" />
+    </clipPath>
+    <clipPath id="biscoito-dir">
+      <rect x="23" y="0" width="23" height="56" />
+    </clipPath>
+
+    
+    <path id="corpo-biscoito" d="M 23,4 A 8.5,8.5 0 0,0 16.8,18.3 L 6.5,19.8 A 3.8,3.8 0 0,0 7.5,27.3 L 15.5,27.8 L 11.2,45.5 A 4.2,4.2 0 0,0 19,48.5 L 23,37.5 L 27,48.5 A 4.2,4.2 0 0,0 34.8,45.5 L 30.5,27.8 L 38.5,27.3 A 3.8,3.8 0 0,0 39.5,19.8 L 29.2,18.3 A 8.5,8.5 0 0,0 23,4 Z" />
+
+    
+    <g id="detalhes-biscoito">
+      
+      <circle cx="19.8" cy="11" r="1.2" fill="#F8FAFC" />
+      <circle cx="26.2" cy="11" r="1.2" fill="#CBD5E1" />
+      <path d="M 19.5,14.2 Q 23,17.2 26.5,14.2" fill="none" stroke="#F8FAFC" stroke-width="1.4" stroke-linecap="round" />
+
+      
+      <path d="M 9.2,19.4 Q 10.5,21.5 9.8,23.5 Q 9.1,25.5 10.4,27.5" fill="none" stroke="#F8FAFC" stroke-width="1.5" stroke-linecap="round" />
+      <path d="M 36.8,19.4 Q 35.5,21.5 36.2,23.5 Q 36.9,25.5 35.6,27.5" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" />
+
+      
+      <path d="M 12.2,42.5 Q 14.2,41.2 16,42.8 Q 17.8,44.4 19.8,43.2" fill="none" stroke="#F8FAFC" stroke-width="1.5" stroke-linecap="round" />
+      <path d="M 33.8,42.5 Q 31.8,41.2 30,42.8 Q 28.2,44.4 26.2,43.2" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" />
+
+      
+      <circle cx="23" cy="24" r="1.8" fill="#008C9E" />
+      <circle cx="23" cy="30.5" r="1.8" fill="#008C9E" />
+    </g>
+  </defs>
+
+  
+  <use href="#corpo-biscoito" fill="#E3B34C" clip-path="url(#biscoito-esq)" />
+
+  
+  <use href="#corpo-biscoito" fill="#C4912C" clip-path="url(#biscoito-dir)" />
+
+  
+  <use href="#detalhes-biscoito" />
+</svg>

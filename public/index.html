@@ -2,37 +2,39 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Anjo - Criar Ambiente</title>
   <link rel="stylesheet" href="/style.css">
-  <!-- Bibliotecas para gerar o PDF diretamente no navegador -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
-<body class="page-criar">
-  <h1>Anjo - Criar Ambiente</h1>
+<body class="page-criar tema-presente">
+  <div class="cartao-entrada caixa-vidro-vinho">
+    <h1>Anjo - Criar Ambiente</h1>
 
-  <div class="campo">
-    <label><strong>Nome da Família:</strong></label>
-    <input type="text" id="nomeFamilia" placeholder="Ex: Família Silva">
-  </div>
-
-  <div class="campo">
-    <label><strong>Participantes:</strong></label>
-    <div id="listaParticipantes">
-      <div class="item-participante">
-        <input type="text" class="input-participante" placeholder="Nome do participante 1">
-      </div>
-      <div class="item-participante">
-        <input type="text" class="input-participante" placeholder="Nome do participante 2">
-      </div>
+    <div class="campo">
+      <label><strong>Nome da Família:</strong></label>
+      <input type="text" id="nomeFamilia" placeholder="Ex: Família Silva">
     </div>
-    
-    <button type="button" class="btn-add" onclick="adicionarCampoParticipante()">+ Adicionar Participante</button>
+
+    <div class="campo">
+      <label><strong>Participantes:</strong></label>
+      <div id="listaParticipantes">
+        <div class="item-participante">
+          <input type="text" class="input-participante" placeholder="Nome do participante 1">
+        </div>
+        <div class="item-participante">
+          <input type="text" class="input-participante" placeholder="Nome do participante 2">
+        </div>
+      </div>
+      
+      <button type="button" class="btn-add" onclick="adicionarCampoParticipante()">+ Adicionar Participante</button>
+    </div>
+
+    <button type="button" class="btn-submit btn-principal-presente" onclick="criarAmbiente()">Criar Jogo e Gerar Códigos</button>
+
+    <div id="resultado" class="resultado-criacao"></div>
   </div>
-
-  <button class="btn-submit" onclick="criarAmbiente()">Criar Jogo e Gerar Códigos</button>
-
-  <div id="resultado"></div>
 
   <script>
     let dadosUltimoJogo = null;
@@ -86,7 +88,6 @@
         if (resposta.ok) {
           const linkFamilia = window.location.origin + '/jogo.html?id=' + dados.familiaId;
           
-          // Guarda os dados para gerar o PDF quando o usuário clicar no botão
           dadosUltimoJogo = {
             nomeFamilia: nomeFamilia,
             linkFamilia: linkFamilia,
@@ -104,7 +105,7 @@
             '<p><strong>Link da Família:</strong> <a href="' + linkFamilia + '" target="_blank">' + linkFamilia + '</a></p>' +
             '<h4>Códigos de Acesso Individuais:</h4>' +
             tabelaCodigos +
-            '<button type="button" class="btn-pdf" onclick="baixarPDFCodigos()">Baixar PDF com Códigos e Link</button>' +
+            '<button type="button" class="btn-pdf btn-principal-presente" onclick="baixarPDFCodigos()">Baixar PDF com Códigos e Link</button>' +
             '<p><small>(Guarde esse PDF ou envie os códigos individualmente para cada parente!)</small></p>';
         } else {
           alert(dados.erro || 'Erro ao criar o jogo.');
@@ -121,38 +122,44 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
-      // Título
-      doc.setFontSize(18);
-      doc.setTextColor(46, 125, 50);
-      doc.text('Anjo - Amigo Secreto', 14, 22);
+      doc.setFontSize(16);
+      doc.setTextColor(0, 0, 0);
+      doc.text('Anjo - Amigo Secreto', 14, 20);
 
-      // Subtítulo com Nome da Família e Link
-      doc.setFontSize(12);
-      doc.setTextColor(40, 40, 40);
-      doc.text('Grupo: ' + dadosUltimoJogo.nomeFamilia, 14, 32);
+      doc.setFontSize(11);
+      doc.text('Grupo: ' + dadosUltimoJogo.nomeFamilia, 14, 28);
 
       doc.setFontSize(10);
-      doc.setTextColor(25, 118, 210);
-      doc.text('Link de acesso: ' + dadosUltimoJogo.linkFamilia, 14, 39);
+      doc.text('Link de acesso: ' + dadosUltimoJogo.linkFamilia, 14, 34);
 
-      // Tabela com Participantes e Códigos
       const linhasTabela = dadosUltimoJogo.codigos.map(function(item) {
         return [item.nome, item.codigo];
       });
 
       doc.autoTable({
-        startY: 46,
-        head: [['Participante', 'Código Único de Acesso']],
+        startY: 40,
+        head: [['Participante', 'Código de Acesso']],
         body: linhasTabela,
         theme: 'grid',
-        headStyles: { fillColor: [46, 125, 50], textColor: 255, fontStyle: 'bold' },
-        styles: { fontSize: 11, cellPadding: 5 },
+        headStyles: {
+          fillColor: [240, 240, 240],
+          textColor: [0, 0, 0],
+          fontStyle: 'bold',
+          lineColor: [0, 0, 0],
+          lineWidth: 0.2
+        },
+        styles: {
+          fontSize: 11,
+          cellPadding: 4,
+          textColor: [0, 0, 0],
+          lineColor: [120, 120, 120],
+          lineWidth: 0.2
+        },
         columnStyles: {
           1: { fontStyle: 'bold' }
         }
       });
 
-      // Nome limpo para o arquivo
       const nomeArquivo = 'codigos-' + dadosUltimoJogo.nomeFamilia.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.pdf';
       doc.save(nomeArquivo);
     }

@@ -3,6 +3,7 @@ window.PainelUtils = (function() {
 
   const CATALOGO_ENFEITES = [
     { id: 'floco', nome: 'floco' },
+    { id: 'homem-biscoito', nome: 'homem biscoito' },
 
     { id: 'bola-amarela', nome: 'bola amarela' },
     { id: 'bola-laranja', nome: 'bola laranja' },
