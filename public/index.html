@@ -28,10 +28,10 @@
         </div>
       </div>
       
-      <button type="button" class="btn-add" onclick="adicionarCampoParticipante()">+ Adicionar Participante</button>
+      <button type="button" class="btn-minimalista" onclick="adicionarCampoParticipante()">+ Adicionar participante</button>
     </div>
 
-    <button type="button" class="btn-submit btn-principal-presente" onclick="criarAmbiente()">Criar Jogo e Gerar Códigos</button>
+    <button type="button" class="btn-principal-presente" onclick="criarAmbiente()">Criar Jogo e Gerar Códigos</button>
 
     <div id="resultado" class="resultado-criacao"></div>
   </div>
@@ -47,7 +47,7 @@
       div.className = 'item-participante';
       div.innerHTML = 
         '<input type="text" class="input-participante" placeholder="Nome do participante ' + totalCampos + '">' +
-        '<button type="button" class="btn-remover" onclick="removerCampoParticipante(this)">X</button>';
+        '<button type="button" class="btn-remover" onclick="removerCampoParticipante(this)" aria-label="Remover">✕</button>';
 
       container.appendChild(div);
     }
@@ -105,7 +105,10 @@
             '<p><strong>Link da Família:</strong> <a href="' + linkFamilia + '" target="_blank">' + linkFamilia + '</a></p>' +
             '<h4>Códigos de Acesso Individuais:</h4>' +
             tabelaCodigos +
-            '<button type="button" class="btn-pdf btn-principal-presente" onclick="baixarPDFCodigos()">Baixar PDF com Códigos e Link</button>' +
+            '<button type="button" class="btn-minimalista btn-download-tabela" onclick="baixarPDFCodigos()">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+              '<span>Baixar Tabela</span>' +
+            '</button>' +
             '<p><small>(Guarde esse PDF ou envie os códigos individualmente para cada parente!)</small></p>';
         } else {
           alert(dados.erro || 'Erro ao criar o jogo.');
