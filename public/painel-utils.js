@@ -3,6 +3,7 @@ window.PainelUtils = (function() {
 
   const CATALOGO_ENFEITES = [
     { id: 'floco', nome: 'floco' },
+    { id: 'homem-biscoito', nome: 'homem biscoito' },
 
     { id: 'bola-amarela', nome: 'bola amarela' },
     { id: 'bola-laranja', nome: 'bola laranja' },
@@ -12,6 +13,10 @@ window.PainelUtils = (function() {
 
     { id: 'bengala-azul', nome: 'bengala azul' },
     { id: 'bengala-vermelha', nome: 'bengala vermelha' },
+    { id: 'bengala-amarela', nome: 'bengala amarela' },
+    { id: 'bengala-laranja', nome: 'bengala laranja' },
+    { id: 'bengala-verde', nome: 'bengala verde' },
+    { id: 'bengala-roxa', nome: 'bengala roxa' }
   ];
 
   const POSICOES_ENFEITES = [
@@ -59,8 +64,6 @@ window.PainelUtils = (function() {
 
   return {
     CATALOGO_ENFEITES,
-    POSICOES_ENFEITES,
-    ENFEITE_PADRAO,
     formatarDataHora,
     normalizarTipoEnfeite,
     obterMaiorArvore,

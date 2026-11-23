@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <defs>
+    <mask id="recorte-perfil">
+      <rect width="120" height="120" fill="white" />
+      
+      <circle cx="60" cy="44" r="17" fill="black" />
+      
+      <path d="M29 94 C29 74, 43 66, 60 66 C77 66, 91 74, 91 94 Z" fill="black" />
+    </mask>
+  </defs>
+  <circle cx="60" cy="60" r="56" fill="#ffffff" mask="url(#recorte-perfil)" />
+</svg>
