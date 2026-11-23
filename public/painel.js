@@ -22,7 +22,7 @@ if (!participanteId || sessionStorage.getItem('participanteId') !== participante
     const proxima = arvoreAtualRecebidos + direcao;
     if (proxima >= 1 && proxima <= total) {
       arvoreAtualRecebidos = proxima;
-      atualizarTelaRecebidos();
+      atualizarTelaMensagens('recebidas');
     }
   });
 
@@ -31,7 +31,7 @@ if (!participanteId || sessionStorage.getItem('participanteId') !== participante
     const proxima = arvoreAtualEnviados + direcao;
     if (proxima >= 1 && proxima <= total) {
       arvoreAtualEnviados = proxima;
-      atualizarTelaEnviados();
+      atualizarTelaMensagens('enviadas');
     }
   });
 }
@@ -129,7 +129,7 @@ function conectarTempoReal() {
     mensagensRecebidas.push(novaMsg);
     arvoreAtualRecebidos = PainelUtils.obterMaiorArvore(mensagensRecebidas);
     atualizarBadgeMenu();
-    atualizarTelaRecebidos();
+    atualizarTelaMensagens('recebidas');
   });
 
   socket.on('mensagem_lida', function(dados) {
@@ -137,7 +137,7 @@ function conectarTempoReal() {
     if (msg && !msg.lida) {
       msg.lida = true;
       atualizarBadgeMenu();
-      atualizarTelaRecebidos();
+      atualizarTelaMensagens('recebidas');
     }
   });
 }
@@ -189,28 +189,32 @@ async function carregarMensagens() {
       arvoreAtualEnviados = PainelUtils.obterMaiorArvore(mensagensEnviadas);
 
       atualizarBadgeMenu();
-      atualizarTelaRecebidos();
-      atualizarTelaEnviados();
+      atualizarTelaMensagens('recebidas');
+      atualizarTelaMensagens('enviadas');
     }
   } catch (err) {
     console.error('Erro ao carregar mensagens:', err);
   }
 }
 
-function atualizarTelaRecebidos() {
-  renderizarPaginacao(mensagensRecebidas, arvoreAtualRecebidos, 'paginacaoRecebidos', true, function(novaArvore) {
-    arvoreAtualRecebidos = novaArvore;
-    atualizarTelaRecebidos();
-  });
-  renderizarMensagens(mensagensRecebidas, arvoreAtualRecebidos, 'listaRecebidas', 'arvoreRecebidos', 'Seu anjo', true);
-}
+function atualizarTelaMensagens(tipo) {
+  const recebidas = tipo === 'recebidas';
+  const mensagens = recebidas ? mensagensRecebidas : mensagensEnviadas;
+  const arvoreSelecionada = recebidas ? arvoreAtualRecebidos : arvoreAtualEnviados;
+  const paginacaoId = recebidas ? 'paginacaoRecebidos' : 'paginacaoEnviados';
+  const listaId = recebidas ? 'listaRecebidas' : 'listaEnviadas';
+  const arvoreId = recebidas ? 'arvoreRecebidos' : 'arvoreEnviados';
+  const autor = recebidas ? 'Seu anjo' : 'Você';
 
-function atualizarTelaEnviados() {
-  renderizarPaginacao(mensagensEnviadas, arvoreAtualEnviados, 'paginacaoEnviados', false, function(novaArvore) {
-    arvoreAtualEnviados = novaArvore;
-    atualizarTelaEnviados();
+  renderizarPaginacao(mensagens, arvoreSelecionada, paginacaoId, recebidas, function(novaArvore) {
+    if (recebidas) {
+      arvoreAtualRecebidos = novaArvore;
+    } else {
+      arvoreAtualEnviados = novaArvore;
+    }
+    atualizarTelaMensagens(tipo);
   });
-  renderizarMensagens(mensagensEnviadas, arvoreAtualEnviados, 'listaEnviadas', 'arvoreEnviados', 'Você', false);
+  renderizarMensagens(mensagens, arvoreSelecionada, listaId, arvoreId, autor, recebidas);
 }
 
 function renderizarPaginacao(mensagens, arvoreSelecionada, containerId, checarNaoLidas, aoTrocar) {
@@ -329,7 +333,7 @@ async function marcarComoLida(mensagem, enfeiteEl, recadoEl) {
 
   renderizarPaginacao(mensagensRecebidas, arvoreAtualRecebidos, 'paginacaoRecebidos', true, function(novaArvore) {
     arvoreAtualRecebidos = novaArvore;
-    atualizarTelaRecebidos();
+    atualizarTelaMensagens('recebidas');
   });
 
   try {
@@ -400,10 +404,10 @@ function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreI
       if (arvoreDaMsg !== arvoreSelecionada) {
         if (eRecebida) {
           arvoreAtualRecebidos = arvoreDaMsg;
-          atualizarTelaRecebidos();
+          atualizarTelaMensagens('recebidas');
         } else {
           arvoreAtualEnviados = arvoreDaMsg;
-          atualizarTelaEnviados();
+          atualizarTelaMensagens('enviadas');
         }
       }
       destacarPar(mensagem.id, mapaEnfeites[mensagem.id], recado);

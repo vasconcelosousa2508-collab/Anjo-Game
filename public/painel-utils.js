@@ -64,8 +64,6 @@ window.PainelUtils = (function() {
 
   return {
     CATALOGO_ENFEITES,
-    POSICOES_ENFEITES,
-    ENFEITE_PADRAO,
     formatarDataHora,
     normalizarTipoEnfeite,
     obterMaiorArvore,

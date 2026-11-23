@@ -1,12 +1,8 @@
 const PainelUtilsPDF = window.PainelUtils;
 
-async function carregarImagemParaCanvasPDF(src) {
-  return PainelUtilsPDF.carregarImagemParaCanvas(src);
-}
-
 async function gerarDataUrlEnfeite(tipo) {
   const nomeArquivo = PainelUtilsPDF.normalizarTipoEnfeite(tipo);
-  const img = await carregarImagemParaCanvasPDF('/assets/' + nomeArquivo + '.svg');
+  const img = await PainelUtilsPDF.carregarImagemParaCanvas('/assets/' + nomeArquivo + '.svg');
   const canvas = document.createElement('canvas');
   canvas.width = 72;
   canvas.height = 86;
@@ -33,7 +29,7 @@ async function gerarDataUrlArvore(mensagensDaArvore, imgArvore) {
     const mensagem = mensagensDaArvore[i];
     const tipo = PainelUtilsPDF.normalizarTipoEnfeite(mensagem.enfeite);
     const posicao = PainelUtilsPDF.obterPosicaoEnfeite(mensagem, i);
-    const imgEnfeite = await carregarImagemParaCanvasPDF('/assets/' + tipo + '.svg');
+    const imgEnfeite = await PainelUtilsPDF.carregarImagemParaCanvas('/assets/' + tipo + '.svg');
     const x = (posicao[0] / 100) * largura - (larguraEnfeite * 0.5);
     const y = (posicao[1] / 100) * altura - (alturaEnfeite * 0.12);
     ctx.drawImage(imgEnfeite, x, y, larguraEnfeite, alturaEnfeite);
@@ -58,7 +54,7 @@ async function baixarRecordacaoPDF() {
 
     const nomePessoa = document.getElementById('perfilNome').textContent.trim() || 'Amigo';
     const titulo = nomePessoa + ', lembre como você foi amado esse ano:';
-    const imgArvore = await carregarImagemParaCanvasPDF('/assets/arvore-natal.svg');
+    const imgArvore = await PainelUtilsPDF.carregarImagemParaCanvas('/assets/arvore-natal.svg');
     const cacheIcones = {};
     const totalArvores = PainelUtilsPDF.obterMaiorArvore(mensagensRecebidas);
 
