@@ -2,7 +2,7 @@ const PainelUtilsPDF = window.PainelUtils;
 
 async function gerarDataUrlEnfeite(tipo) {
   const nomeArquivo = PainelUtilsPDF.normalizarTipoEnfeite(tipo);
-  const img = await PainelUtilsPDF.carregarImagemParaCanvas('/assets/' + nomeArquivo + '.svg');
+  const img = await PainelUtilsPDF.carregarImagemParaCanvas('/assets/enfeites/' + nomeArquivo + '.svg');
   const canvas = document.createElement('canvas');
   canvas.width = 72;
   canvas.height = 86;
@@ -29,7 +29,7 @@ async function gerarDataUrlArvore(mensagensDaArvore, imgArvore) {
     const mensagem = mensagensDaArvore[i];
     const tipo = PainelUtilsPDF.normalizarTipoEnfeite(mensagem.enfeite);
     const posicao = PainelUtilsPDF.obterPosicaoEnfeite(mensagem, i);
-    const imgEnfeite = await PainelUtilsPDF.carregarImagemParaCanvas('/assets/' + tipo + '.svg');
+    const imgEnfeite = await PainelUtilsPDF.carregarImagemParaCanvas('/assets/enfeites/' + tipo + '.svg');
     const x = (posicao[0] / 100) * largura - (larguraEnfeite * 0.5);
     const y = (posicao[1] / 100) * altura - (alturaEnfeite * 0.12);
     ctx.drawImage(imgEnfeite, x, y, larguraEnfeite, alturaEnfeite);

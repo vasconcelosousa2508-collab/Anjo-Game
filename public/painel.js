@@ -62,7 +62,7 @@ function montarSeletorEnfeites() {
     caixa.className = 'caixa-enfeite';
 
     const icone = document.createElement('img');
-    icone.src = '/assets/' + item.id + '.svg';
+    icone.src = '/assets/enfeites/' + item.id + '.svg';
     icone.alt = item.nome;
     caixa.appendChild(icone);
 
@@ -101,14 +101,12 @@ async function carregarDados() {
     if (resposta.ok) {
       document.getElementById('nomeJogador').textContent = dados.nome;
       document.getElementById('perfilNome').textContent = dados.nome || 'Não informado';
-      document.getElementById('perfilNomeDesktop').textContent = dados.nome || 'Não informado';
     }
 
     const respostaProtegido = await fetch('/api/participantes/' + participanteId + '/protegido');
     const protegido = await respostaProtegido.json();
     const nomeProt = (respostaProtegido.ok && protegido.nome) ? protegido.nome : (protegido.erro || 'Não definido');
     document.getElementById('nomeProtegido').textContent = nomeProt;
-    document.getElementById('nomeProtegidoDesktop').textContent = nomeProt;
 
     await carregarMensagens();
   } catch (err) {
@@ -258,7 +256,7 @@ function renderizarPaginacao(mensagens, arvoreSelecionada, containerId, checarNa
 function criarIconeEnfeite(tipo) {
   const nomeArquivo = PainelUtils.normalizarTipoEnfeite(tipo);
   const img = document.createElement('img');
-  img.src = '/assets/' + nomeArquivo + '.svg';
+  img.src = '/assets/enfeites/' + nomeArquivo + '.svg';
   img.alt = nomeArquivo;
   return img;
 }
