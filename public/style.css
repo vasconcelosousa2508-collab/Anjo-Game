@@ -6,7 +6,6 @@
 
   --vidro-vinho-bg: rgba(98, 8, 16, 0.56);
   --vidro-vinho-bg-hover: rgba(82, 5, 12, 0.72);
-  --vidro-borda-cor: #ffffff;
   --vidro-texto-cor: #ffffff;
   --vidro-blur: 2px;
 
@@ -54,8 +53,7 @@ button:hover {
   opacity: 0.92;
 }
 
-.btn-fechar-popup,
-.mobile-tabs .tab-btn {
+.btn-fechar-popup {
   background: #e0e0e0;
   color: #333;
   margin-top: 0;
@@ -224,13 +222,17 @@ button:hover {
 }
 
 /* CENÁRIO DE INVERNO E BARRA SUPERIOR (TELAS 2 E 3) */
-.tema-inverno.tela.ativa {
+.tema-inverno.tela.ativa,
+#telaMenu.tela.ativa {
   position: fixed;
   inset: 0;
   z-index: 10;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+}
+
+.tema-inverno.tela.ativa {
   background-color: #9ed9ec;
   background-image: var(--inverno-fundo-imagem);
   background-size: cover;
@@ -289,12 +291,6 @@ button:hover {
 
 /* MENU PRINCIPAL EM TELA CHEIA (TELA 1) */
 #telaMenu.tela.ativa {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
   padding: 32px;
   box-sizing: border-box;
 }
@@ -388,30 +384,156 @@ button:hover {
   padding: 3px 8px;
   font-size: 12px;
   font-weight: bold;
-  color: #5c3d00;
-  background: #ffd54f;
-  border-radius: 6px;
-}
-
-.page-painel .card {
-  border: 1px solid #ddd;
-  padding: 20px;
-  margin-top: 12px;
-  border-radius: 16px;
-  background: #fff;
-}
-
-.page-painel textarea {
-  width: 100%;
-  height: 96px;
-  padding: 12px 14px;
-  font: 16px/1.4 inherit;
-  box-sizing: border-box;
-  margin-top: 6px;
+  color: #000000;
+  background: #f8c009;
+  border-radius: 1px;
 }
 
 .page-painel button {
   margin-top: 6px;
+}
+
+/* FORMULÁRIO DE ENVIAR MENSAGEM (VIDRO GELO) */
+.page-painel .card {
+  margin-top: 0;
+  padding: 24px 26px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.24);
+  border: 1.5px solid rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 10px 26px rgba(15, 70, 90, 0.14);
+  color: #ffffff;
+}
+
+.page-painel .card h3 {
+  margin: 0 0 14px;
+  font-size: 22px;
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(15, 70, 90, 0.25);
+}
+
+.page-painel textarea {
+  width: 100%;
+  height: 104px;
+  padding: 14px 16px;
+  font: 16px/1.45 inherit;
+  color: #2b2620;
+  background: rgba(255, 255, 255, 0.94);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(15, 70, 90, 0.08);
+  box-sizing: border-box;
+  margin-top: 0;
+  resize: vertical;
+  outline: none;
+}
+
+.page-painel textarea:focus {
+  background: #ffffff;
+  border-color: var(--inverno-verde-agua);
+}
+
+.seletor-enfeite {
+  margin: 18px 0 14px;
+  padding: 0;
+  border: 0;
+}
+
+.seletor-enfeite legend {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(15, 70, 90, 0.25);
+}
+
+.grade-enfeites {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+  gap: 12px;
+  max-height: 205px;
+  overflow-y: auto;
+  padding: 4px 4px 6px 2px;
+}
+
+.opcao-enfeite {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.opcao-enfeite input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.caixa-enfeite {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 74px;
+  height: 76px;
+  padding: 11px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2.5px solid transparent;
+  border-radius: 18px;
+  box-shadow: 0 4px 10px rgba(15, 70, 90, 0.1);
+}
+
+.caixa-enfeite img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.opcao-enfeite:hover .caixa-enfeite {
+  background: #ffffff;
+  border-color: rgba(22, 152, 141, 0.45);
+}
+
+.opcao-enfeite input[type="radio"]:checked + .caixa-enfeite {
+  background: #ffffff;
+  border-color: var(--inverno-verde-agua);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.65);
+}
+
+.legenda-enfeite {
+  max-width: 78px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(15, 70, 90, 0.35);
+  text-align: center;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#formRecado button[type="submit"] {
+  margin-top: 6px;
+  padding: 11px 30px;
+  border-radius: 999px;
+  background: var(--inverno-verde-agua);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(15, 70, 90, 0.18);
+}
+
+#statusRecado {
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(15, 70, 90, 0.3);
 }
 
 /* ÁRVORE, CARD BRANCO E PASSADOR < 1/2 > */
@@ -538,8 +660,19 @@ button:hover {
   display: block;
 }
 
+@keyframes pulsarEnfeiteNovo {
+  0%, 100% {
+    scale: 1;
+    filter: drop-shadow(0 0 6px rgba(255, 193, 7, 0.85));
+  }
+  50% {
+    scale: 1.12;
+    filter: drop-shadow(0 0 13px rgba(255, 213, 79, 1));
+  }
+}
+
 .enfeite-na-arvore.nao-lida {
-  filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.95));
+  animation: pulsarEnfeiteNovo 1.8s ease-in-out infinite;
   z-index: 2;
 }
 
@@ -562,16 +695,20 @@ button:hover {
   backdrop-filter: blur(2px);
 }
 
+.popup-cartao,
+.recado-simulado {
+  border: 6px solid transparent;
+  background:
+    linear-gradient(#f6efe2, #f6efe2) padding-box,
+    var(--candy-cane-borda) border-box;
+}
+
 .popup-cartao {
   position: relative;
   width: 100%;
   max-width: 460px;
   padding: 22px 24px;
-  border: 6px solid transparent;
   border-radius: 22px;
-  background:
-    linear-gradient(#f6efe2, #f6efe2) padding-box,
-    var(--candy-cane-borda) border-box;
   box-shadow: 0 14px 34px rgba(10, 40, 55, 0.35);
   color: #2b2620;
   box-sizing: border-box;
@@ -671,11 +808,7 @@ button:hover {
   gap: 12px;
   margin: 0 0 20px;
   padding: 18px 20px;
-  border: 6px solid transparent;
   border-radius: 20px;
-  background:
-    linear-gradient(#f6efe2, #f6efe2) padding-box,
-    var(--candy-cane-borda) border-box;
   box-shadow: 0 6px 16px rgba(15, 70, 90, 0.14);
   cursor: pointer;
 }
@@ -738,87 +871,6 @@ button:hover {
   word-break: break-word;
 }
 
-.recado-meta {
-  font-size: 13px;
-  color: #7d7365;
-}
-
-.seletor-enfeite {
-  margin: 14px 0;
-  padding: 0;
-  border: 0;
-}
-
-.seletor-enfeite legend {
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-.grade-enfeites {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
-  gap: 12px;
-  max-height: 205px;
-  overflow-y: auto;
-  padding: 4px 4px 6px 2px;
-}
-
-.opcao-enfeite {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.opcao-enfeite input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.caixa-enfeite {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 74px;
-  height: 78px;
-  padding: 10px;
-  box-sizing: border-box;
-  background: #fff;
-  border: 2px solid #222;
-  border-radius: 16px;
-}
-
-.caixa-enfeite img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-.opcao-enfeite:hover .caixa-enfeite {
-  border-color: #2e7d32;
-}
-
-.opcao-enfeite input[type="radio"]:checked + .caixa-enfeite {
-  border-color: #00a896;
-  background: #f2fbfa;
-  box-shadow: 0 0 0 2px rgba(0, 168, 150, 0.18);
-}
-
-.legenda-enfeite {
-  max-width: 78px;
-  font-size: 11.5px;
-  color: #666;
-  text-align: center;
-  line-height: 1.15;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 /* MOBILE */
 @media (max-width: 720px) {
   body {
@@ -842,7 +894,7 @@ button:hover {
     padding: 16px;
   }
 
-.mobile-tabs {
+  .mobile-tabs {
     display: flex;
     gap: 6px;
     padding: 5px;
