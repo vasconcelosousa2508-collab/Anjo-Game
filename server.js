@@ -1,4 +1,5 @@
 // dependencias
+const path = require('path');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -17,6 +18,12 @@ app.set('io', io); // deixa o Socket.IO disponível nas rotas
 
 app.use(express.json()); // prepara p recepção de dados JSON
 app.use(cors()); // habilita permisoes de acessos externos
+
+// rota limpa para a tela de criar família
+app.get('/criar-jogo', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'criar-jogo.html'));
+});
+
 app.use(express.static('public')); // os arquivos na pasta public são visiveis ao navegador
 
 // ativa rotas

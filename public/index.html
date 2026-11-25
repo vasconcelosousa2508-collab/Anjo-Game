@@ -3,171 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anjo - Criar Ambiente</title>
+  <title>Anjo - Amigo Secreto de Natal</title>
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/entrada.css">
   <link rel="stylesheet" href="/css/temas.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
-<body class="page-criar tema-presente">
-  <div class="cartao-entrada caixa-vidro-vinho">
-    <h1>Anjo - Criar Ambiente</h1>
+<body class="page-inicio tema-presente">
+  <main class="cartao-entrada cartao-boas-vindas caixa-vidro-vinho">
+    <h1>Bem-vindo ao Anjo!</h1>
+    <p class="subtitulo-boas-vindas">
+      Um amigo secreto cheio de carinho para a família ou amigos trocarem recadinhos anônimos e enfeitarem a árvore de Natal uns dos outros antes da revelação.
+    </p>
 
-    <div class="campo">
-      <label><strong>Nome da Família:</strong></label>
-      <input type="text" id="nomeFamilia" placeholder="Ex: Família Silva">
-    </div>
-
-    <div class="campo">
-      <label><strong>Participantes:</strong></label>
-      <div id="listaParticipantes">
-        <div class="item-participante">
-          <input type="text" class="input-participante" placeholder="Nome do participante 1">
-        </div>
-        <div class="item-participante">
-          <input type="text" class="input-participante" placeholder="Nome do participante 2">
+    <div class="passos-jogo">
+      <div class="passo-item">
+        <span class="passo-numero">1</span>
+        <div>
+          <strong>Crie o grupo e sorteie</strong>
+          <p>Informe o nome da família e os participantes. O sorteio de quem tirou quem acontece na hora, sem ninguém precisar criar conta.</p>
         </div>
       </div>
-      
-      <button type="button" class="btn-minimalista" onclick="adicionarCampoParticipante()">+ Adicionar participante</button>
+
+      <div class="passo-item">
+        <span class="passo-numero">2</span>
+        <div>
+          <strong>Envie mensagens e enfeites anônimos</strong>
+          <p>Cada pessoa entra no seu painel, descobre seu <em>Protegido</em> e pendura enfeites na árvore dele com recados secretos.</p>
+        </div>
+      </div>
+
+      <div class="passo-item">
+        <span class="passo-numero">3</span>
+        <div>
+          <strong>Guarde sua árvore de recordação</strong>
+          <p>No dia da revelação, cada participante pode baixar um PDF lindo com suas árvores decoradas e todas as mensagens recebidas.</p>
+        </div>
+      </div>
     </div>
 
-    <button type="button" class="btn-principal-presente" onclick="criarAmbiente()">Criar Jogo e Gerar Códigos</button>
+    <div class="aviso-guardar">
+      <strong>Importante antes de começar:</strong>
+      <p>
+        Ao criar o jogo, você receberá o link do grupo e uma tabela com o código único de cada pessoa. <br><br>Baixe o PDF ou salve esses códigos e os envie separademente — é só com eles que cada participante consegue entrar!
+      </p>
+    </div>
 
-    <div id="resultado" class="resultado-criacao"></div>
-  </div>
-
-  <script>
-    let dadosUltimoJogo = null;
-
-    function adicionarCampoParticipante() {
-      const container = document.getElementById('listaParticipantes');
-      const totalCampos = container.getElementsByClassName('item-participante').length + 1;
-
-      const div = document.createElement('div');
-      div.className = 'item-participante';
-      div.innerHTML = 
-        '<input type="text" class="input-participante" placeholder="Nome do participante ' + totalCampos + '">' +
-        '<button type="button" class="btn-remover" onclick="removerCampoParticipante(this)" aria-label="Remover">✕</button>';
-
-      container.appendChild(div);
-    }
-
-    function removerCampoParticipante(botao) {
-      botao.parentElement.remove();
-    }
-
-    async function criarAmbiente() {
-      const nomeFamilia = document.getElementById('nomeFamilia').value.trim();
-      const inputs = document.querySelectorAll('.input-participante');
-      
-      const listaParticipantes = [];
-      inputs.forEach(function(input) {
-        const valor = input.value.trim();
-        if (valor) listaParticipantes.push(valor);
-      });
-
-      if (!nomeFamilia) {
-        alert('Por favor, informe o nome da família!');
-        return;
-      }
-
-      if (listaParticipantes.length < 2) {
-        alert('Adicione pelo menos 2 participantes!');
-        return;
-      }
-
-      try {
-        const resposta = await fetch('/api/familias', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nomeFamilia: nomeFamilia, participantes: listaParticipantes })
-        });
-
-        const dados = await resposta.json();
-
-        if (resposta.ok) {
-          const linkFamilia = window.location.origin + '/jogo.html?id=' + dados.familiaId;
-          
-          dadosUltimoJogo = {
-            nomeFamilia: nomeFamilia,
-            linkFamilia: linkFamilia,
-            codigos: dados.codigos
-          };
-
-          let tabelaCodigos = '<ul>';
-          dados.codigos.forEach(function(item) {
-            tabelaCodigos += '<li><strong>' + item.nome + ':</strong> ' + item.codigo + '</li>';
-          });
-          tabelaCodigos += '</ul>';
-
-          document.getElementById('resultado').innerHTML = 
-            '<h3>Jogo Criado com Sucesso!</h3>' +
-            '<p><strong>Link da Família:</strong> <a href="' + linkFamilia + '" target="_blank">' + linkFamilia + '</a></p>' +
-            '<h4>Códigos de Acesso Individuais:</h4>' +
-            tabelaCodigos +
-            '<button type="button" class="btn-minimalista btn-download-tabela" onclick="baixarPDFCodigos()">' +
-              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
-              '<span>Baixar Tabela</span>' +
-            '</button>' +
-            '<p><small>(Guarde esse PDF ou envie os códigos individualmente para cada parente!)</small></p>';
-        } else {
-          alert(dados.erro || 'Erro ao criar o jogo.');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Erro ao conectar com o servidor.');
-      }
-    }
-
-    function baixarPDFCodigos() {
-      if (!dadosUltimoJogo) return;
-
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
-      doc.setFontSize(16);
-      doc.setTextColor(0, 0, 0);
-      doc.text('Anjo - Amigo Secreto', 14, 20);
-
-      doc.setFontSize(11);
-      doc.text('Grupo: ' + dadosUltimoJogo.nomeFamilia, 14, 28);
-
-      doc.setFontSize(10);
-      doc.text('Link de acesso: ' + dadosUltimoJogo.linkFamilia, 14, 34);
-
-      const linhasTabela = dadosUltimoJogo.codigos.map(function(item) {
-        return [item.nome, item.codigo];
-      });
-
-      doc.autoTable({
-        startY: 40,
-        head: [['Participante', 'Código de Acesso']],
-        body: linhasTabela,
-        theme: 'grid',
-        headStyles: {
-          fillColor: [240, 240, 240],
-          textColor: [0, 0, 0],
-          fontStyle: 'bold',
-          lineColor: [0, 0, 0],
-          lineWidth: 0.2
-        },
-        styles: {
-          fontSize: 11,
-          cellPadding: 4,
-          textColor: [0, 0, 0],
-          lineColor: [120, 120, 120],
-          lineWidth: 0.2
-        },
-        columnStyles: {
-          1: { fontStyle: 'bold' }
-        }
-      });
-
-      const nomeArquivo = 'codigos-' + dadosUltimoJogo.nomeFamilia.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.pdf';
-      doc.save(nomeArquivo);
-    }
-  </script>
+    <a class="btn-principal-presente btn-link-presente" href="/criar-jogo">Criar Jogo</a>
+  </main>
 </body>
 </html>

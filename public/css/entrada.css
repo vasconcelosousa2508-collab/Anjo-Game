@@ -1,4 +1,5 @@
-/* TELAS INICIAIS (index.html e jogo.html) */
+/* TELAS INICIAIS (index.html, criar-jogo.html e jogo.html) */
+.page-inicio,
 .page-criar,
 .page-jogo {
   min-height: 100vh;
@@ -17,6 +18,10 @@
   box-sizing: border-box;
 }
 
+.cartao-boas-vindas {
+  max-width: 560px;
+}
+
 .page-jogo .cartao-entrada {
   text-align: center;
 }
@@ -26,6 +31,119 @@
   margin-top: 0;
 }
 
+/* TELA DE BOAS-VINDAS (index.html) */
+.selo-boas-vindas {
+  display: inline-block;
+  padding: 5px 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.4px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+}
+
+.cartao-boas-vindas h1 {
+  margin-bottom: 10px;
+  font-size: 30px;
+}
+
+.subtitulo-boas-vindas {
+  margin: 0 0 22px;
+  font-size: 16.5px;
+  line-height: 1.5;
+  opacity: 0.95;
+}
+
+.passos-jogo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.passo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.passo-numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  margin-top: 2px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #7a0c15;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.passo-item strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 16px;
+}
+
+.passo-item p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  opacity: 0.92;
+}
+
+.aviso-guardar {
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  background: rgba(55, 0, 5, 0.42);
+  border: 1px solid rgba(255, 213, 79, 0.7);
+  border-radius: 14px;
+}
+
+.aviso-guardar strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 17px;
+  color: #ffd54f;
+}
+
+.aviso-guardar p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+}
+
+.btn-link-presente {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-link-presente:hover {
+  opacity: 0.94;
+}
+
+.link-voltar-entrada {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link-voltar-entrada:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* FORMULÁRIOS DE CRIAR AMBIENTE E ENTRAR NO JOGO (criar-jogo.html e jogo.html) */
 .page-criar .campo {
   margin-bottom: 16px;
 }
@@ -51,7 +169,7 @@
 }
 
 .page-criar .btn-principal-presente,
-.page-jogo .btn-principal-presente {
+.page-inicio .btn-principal-presente {
   width: 100%;
   padding: 14px 18px;
   margin-top: 14px;
