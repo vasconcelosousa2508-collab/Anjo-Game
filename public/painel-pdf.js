@@ -95,9 +95,16 @@ function gerarMolduraCandyCaneDataUrl(larguraMM, alturaMM) {
   return canvas.toDataURL('image/png');
 }
 
-async function gerarDataUrlEnfeite(tipo) {
+function carregarImagemEnfeite(tipo, cacheImagens) {
   const nomeArquivo = PainelUtilsPDF.normalizarTipoEnfeite(tipo);
-  const img = await PainelUtilsPDF.carregarImagemParaCanvas('/assets/enfeites/' + nomeArquivo + '.svg');
+  if (!cacheImagens.has(nomeArquivo)) {
+    cacheImagens.set(nomeArquivo, PainelUtilsPDF.carregarImagemParaCanvas('/assets/enfeites/' + nomeArquivo + '.svg'));
+  }
+  return cacheImagens.get(nomeArquivo);
+}
+
+async function gerarDataUrlEnfeite(tipo, cacheImagens) {
+  const img = await carregarImagemEnfeite(tipo, cacheImagens);
   const canvas = document.createElement('canvas');
   canvas.width = 96;
   canvas.height = 114;
@@ -106,7 +113,7 @@ async function gerarDataUrlEnfeite(tipo) {
   return canvas.toDataURL('image/png');
 }
 
-async function gerarDataUrlArvore(mensagensDaArvore, imgArvore) {
+async function gerarDataUrlArvore(mensagensDaArvore, imgArvore, cacheImagens) {
   const larguraArvore = 560;
   const proporcao = (imgArvore.naturalHeight || 1000) / (imgArvore.naturalWidth || 840);
   const alturaArvore = Math.round(larguraArvore * proporcao);
@@ -145,7 +152,7 @@ async function gerarDataUrlArvore(mensagensDaArvore, imgArvore) {
     const mensagem = mensagensDaArvore[i];
     const tipo = PainelUtilsPDF.normalizarTipoEnfeite(mensagem.enfeite);
     const posicao = PainelUtilsPDF.obterPosicaoEnfeite(mensagem, i);
-    const imgEnfeite = await PainelUtilsPDF.carregarImagemParaCanvas('/assets/enfeites/' + tipo + '.svg');
+    const imgEnfeite = await carregarImagemEnfeite(tipo, cacheImagens);
     const x = respiro + (posicao[0] / 100) * larguraArvore - (larguraEnfeite * 0.5);
     const y = respiro + (posicao[1] / 100) * alturaArvore - (alturaEnfeite * 0.12);
     ctx.drawImage(imgEnfeite, x, y, larguraEnfeite, alturaEnfeite);
@@ -172,6 +179,13 @@ async function baixarRecordacaoPDF() {
     const fundoInvernoUrl = await carregarFundoInvernoDataUrl();
     const imgArvore = await PainelUtilsPDF.carregarImagemParaCanvas('/assets/arvore-natal.svg');
     const cacheIcones = {};
+    const cacheImagensEnfeites = new Map();
+    const tiposEnfeites = [...new Set(mensagensRecebidas.map(function(mensagem) {
+      return PainelUtilsPDF.normalizarTipoEnfeite(mensagem.enfeite);
+    }))];
+    await Promise.all(tiposEnfeites.map(function(tipo) {
+      return carregarImagemEnfeite(tipo, cacheImagensEnfeites);
+    }));
     const totalArvores = PainelUtilsPDF.obterMaiorArvore(mensagensRecebidas);
 
     const arvoresRenderizadas = [];
@@ -179,7 +193,7 @@ async function baixarRecordacaoPDF() {
       const msgsArvore = mensagensRecebidas.filter(function(m) {
         return (m.arvoreNumero || 1) === num;
       });
-      arvoresRenderizadas.push(await gerarDataUrlArvore(msgsArvore, imgArvore));
+      arvoresRenderizadas.push(await gerarDataUrlArvore(msgsArvore, imgArvore, cacheImagensEnfeites));
     }
 
     // 3 colunas largas estilo alvenaria (masonry)
@@ -248,7 +262,7 @@ async function baixarRecordacaoPDF() {
         const msg = mensagensRecebidas[indiceMsg];
         const tipo = PainelUtilsPDF.normalizarTipoEnfeite(msg.enfeite);
         if (!cacheIcones[tipo]) {
-          cacheIcones[tipo] = await gerarDataUrlEnfeite(tipo);
+          cacheIcones[tipo] = await gerarDataUrlEnfeite(tipo, cacheImagensEnfeites);
         }
 
         const larguraTexto = larguraCartao - 7.6;
