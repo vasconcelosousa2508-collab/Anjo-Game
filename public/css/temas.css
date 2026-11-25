@@ -1,0 +1,22 @@
+/* CLASSES UNIVERSAIS REUTILIZÁVEIS (PAPEL DE PRESENTE + CAIXA VIDRO VINHO) */
+.tema-presente {
+  background-color: var(--presente-cor-base);
+  background-image: var(--presente-estampa);
+  background-repeat: repeat;
+  background-size: var(--presente-estampa-tamanho);
+  color: var(--vidro-texto-cor);
+}
+
+.caixa-vidro-vinho {
+  background: var(--vidro-vinho-bg);
+  backdrop-filter: blur(var(--vidro-blur));
+  -webkit-backdrop-filter: blur(var(--vidro-blur));
+  color: var(--vidro-texto-cor);
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 10px 24px rgba(55, 0, 5, 0.25);
+}
+
+.btn-sair.caixa-vidro-vinho:hover,
+.perfil-card.caixa-vidro-vinho:hover {
+  background: var(--vidro-vinho-bg-hover);
+}
