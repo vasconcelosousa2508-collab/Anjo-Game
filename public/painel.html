@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Anjo - Meu Painel</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/temas.css">
+  <link rel="stylesheet" href="/css/painel-layout.css">
+  <link rel="stylesheet" href="/css/painel-componentes.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="page-painel">
@@ -21,7 +24,7 @@
 
       <div class="perfis-container">
         <div class="perfil-card caixa-vidro-vinho" onclick="navegarPara('telaMeuPerfil')">
-          <img src="/assets/icone-voce.svg" class="avatar-circulo" alt="Você">
+          <img src="/assets/icons/icone-voce.svg" class="avatar-circulo" alt="Você">
           <p class="perfil-rotulo">
             <strong>VOCÊ</strong>
             <span id="badgeMenuNovas" class="badge-novas" hidden></span>
@@ -29,103 +32,92 @@
         </div>
 
         <div class="perfil-card caixa-vidro-vinho" onclick="navegarPara('telaProtegido')">
-          <img src="/assets/icone-protegido.svg" class="avatar-circulo" alt="Seu Protegido">
+          <img src="/assets/icons/icone-protegido.svg" class="avatar-circulo" alt="Seu Protegido">
           <p class="perfil-rotulo"><strong>SEU PROTEGIDO</strong></p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TELA 2: MEU PERFIL -->
-  <div id="telaMeuPerfil" class="tela">
-    <div class="mobile-topo">
-      <button onclick="navegarPara('telaMenu')">Voltar</button>
-      <h2>Meu Perfil</h2>
-      <div class="card">
-        <p><strong>Nome:</strong> <span id="perfilNome"></span></p>
+<!-- TELA 2: MEU PERFIL -->
+  <div id="telaMeuPerfil" class="tela tema-inverno">
+    <header class="barra-topo-inverno">
+      <div class="barra-topo-conteudo">
+        <button type="button" class="btn-voltar-inverno" onclick="navegarPara('telaMenu')">← Voltar</button>
+        <h2>Meu Perfil - <span id="perfilNome"></span></h2>
       </div>
-    </div>
+    </header>
 
-    <div class="mobile-tabs">
-      <button type="button" class="tab-btn ativa" data-grupo="perfil" data-alvo="arvore" onclick="trocarAbaMobile('perfil', 'arvore')">Árvore</button>
-      <button type="button" class="tab-btn" data-grupo="perfil" data-alvo="lista" onclick="trocarAbaMobile('perfil', 'lista')">Mensagens</button>
-    </div>
+    <div class="conteudo-inverno">
+      <div class="mobile-tabs">
+        <button type="button" class="tab-btn ativa" data-grupo="perfil" data-alvo="arvore" onclick="trocarAbaMobile('perfil', 'arvore')">Árvore</button>
+        <button type="button" class="tab-btn" data-grupo="perfil" data-alvo="lista" onclick="trocarAbaMobile('perfil', 'lista')">Mensagens</button>
+      </div>
 
-    <div class="arvore-msg-layout" id="layoutPerfil" data-aba-ativa="arvore">
-      <div class="arvore-coluna painel-aba" data-aba="arvore">
-        <div class="desktop-topo">
-          <button onclick="navegarPara('telaMenu')">Voltar</button>
-          <h2>Meu Perfil</h2>
-          <div class="card">
-            <p><strong>Nome:</strong> <span id="perfilNomeDesktop"></span></p>
+      <div class="arvore-msg-layout" id="layoutPerfil" data-aba-ativa="arvore">
+        <div class="arvore-coluna painel-aba" data-aba="arvore">
+          <button type="button" class="btn-recordacao-inverno" onclick="baixarRecordacaoPDF()">Baixar recordação</button>
+
+          <div class="arvore-demo" id="areaSwipeRecebidos">
+            <img src="/assets/arvore-natal.svg" alt="Árvore de Natal">
+            <div class="arvore-enfeites" id="arvoreRecebidos"></div>
           </div>
+
+          <div id="paginacaoRecebidos" class="paginacao-arvores"></div>
+          <p class="dica-arvore"><small>Toque em um enfeite para abrir a mensagem</small></p>
         </div>
 
-        <div id="paginacaoRecebidos" class="paginacao-arvores"></div>
-        <div class="arvore-demo" id="areaSwipeRecebidos">
-          <img src="/assets/arvore-natal.svg" alt="Árvore de Natal">
-          <div class="arvore-enfeites" id="arvoreRecebidos"></div>
+        <div class="mensagens-card painel-aba" data-aba="lista">
+          <h3>Mensagens Recebidas</h3>
+          <div id="listaRecebidas" class="grade-recados"></div>
         </div>
-        <p class="dica-arvore"><small>Toque em um enfeite para abrir a mensagem</small></p>
-        <button type="button" onclick="baixarRecordacaoPDF()">Baixar Recordação (PDF)</button>
-      </div>
-
-      <div class="mensagens-card painel-aba" data-aba="lista">
-        <h3>Mensagens Recebidas</h3>
-        <div id="listaRecebidas" class="grade-recados"></div>
       </div>
     </div>
   </div>
 
   <!-- TELA 3: PROTEGIDO -->
-  <div id="telaProtegido" class="tela">
-    <div class="mobile-topo">
-      <button onclick="navegarPara('telaMenu')">Voltar</button>
-      <h2>Seu Protegido</h2>
-      <div class="card">
-        <p><strong>Amigo Secreto:</strong> <span id="nomeProtegido"></span></p>
+  <div id="telaProtegido" class="tela tema-inverno">
+    <header class="barra-topo-inverno">
+      <div class="barra-topo-conteudo">
+        <button type="button" class="btn-voltar-inverno" onclick="navegarPara('telaMenu')">← Voltar</button>
+        <h2>Seu Protegido - <span id="nomeProtegido"></span></h2>
       </div>
-    </div>
+    </header>
 
-    <div class="mobile-tabs">
-      <button type="button" class="tab-btn ativa" data-grupo="protegido" data-alvo="decorar" onclick="trocarAbaMobile('protegido', 'decorar')">Decorar</button>
-      <button type="button" class="tab-btn" data-grupo="protegido" data-alvo="arvore" onclick="trocarAbaMobile('protegido', 'arvore')">Árvore</button>
-    </div>
+    <div class="conteudo-inverno">
+      <div class="mobile-tabs">
+        <button type="button" class="tab-btn ativa" data-grupo="protegido" data-alvo="decorar" onclick="trocarAbaMobile('protegido', 'decorar')">Decorar</button>
+        <button type="button" class="tab-btn" data-grupo="protegido" data-alvo="arvore" onclick="trocarAbaMobile('protegido', 'arvore')">Árvore</button>
+      </div>
 
-    <div class="arvore-msg-layout" id="layoutProtegido" data-aba-ativa="decorar">
-      <div class="arvore-coluna painel-aba" data-aba="arvore">
-        <div class="desktop-topo">
-          <button onclick="navegarPara('telaMenu')">Voltar</button>
-          <h2>Seu Protegido</h2>
-          <div class="card">
-            <p><strong>Amigo Secreto:</strong> <span id="nomeProtegidoDesktop"></span></p>
+      <div class="arvore-msg-layout" id="layoutProtegido" data-aba-ativa="decorar">
+        <div class="arvore-coluna painel-aba" data-aba="arvore">
+          <div class="arvore-demo" id="areaSwipeEnviados">
+            <img src="/assets/arvore-natal.svg" alt="Árvore de Natal do seu protegido">
+            <div class="arvore-enfeites" id="arvoreEnviados"></div>
           </div>
+
+          <div id="paginacaoEnviados" class="paginacao-arvores"></div>
+          <p class="dica-arvore"><small>Toque em um enfeite para localizar o recado</small></p>
         </div>
 
-        <div id="paginacaoEnviados" class="paginacao-arvores"></div>
-        <div class="arvore-demo" id="areaSwipeEnviados">
-          <img src="/assets/arvore-natal.svg" alt="Árvore de Natal do seu protegido">
-          <div class="arvore-enfeites" id="arvoreEnviados"></div>
-        </div>
-        <p class="dica-arvore"><small>Toque em um enfeite para localizar o recado</small></p>
-      </div>
+        <div class="mensagens-card painel-aba" data-aba="decorar">
+          <div class="card">
+            <h3>Enviar Mensagem Anônima</h3>
+            <form id="formRecado">
+              <textarea id="msgTexto" placeholder="Escreva sua mensagem..." required></textarea>
+              <fieldset class="seletor-enfeite" id="containerSeletorEnfeite">
+                <legend>Escolha um enfeite</legend>
+              </fieldset>
+              <button type="submit">Enviar</button>
+              <p id="statusRecado" role="status"></p>
+            </form>
+          </div>
 
-      <div class="mensagens-card painel-aba" data-aba="decorar">
-        <div class="card">
-          <h3>Enviar Mensagem Anônima</h3>
-          <form id="formRecado">
-            <textarea id="msgTexto" placeholder="Escreva sua mensagem..." required></textarea>
-            <fieldset class="seletor-enfeite" id="containerSeletorEnfeite">
-              <legend>Escolha um enfeite</legend>
-            </fieldset>
-            <button type="submit">Enviar</button>
-            <p id="statusRecado" role="status"></p>
-          </form>
-        </div>
-
-        <div class="secao-enviadas">
-          <h3>Últimas Mensagens Enviadas</h3>
-          <div id="listaEnviadas" class="grade-recados"></div>
+          <div class="secao-enviadas">
+            <h3>Últimas Mensagens Enviadas</h3>
+            <div id="listaEnviadas" class="grade-recados"></div>
+          </div>
         </div>
       </div>
     </div>

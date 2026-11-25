@@ -1,0 +1,120 @@
+/* TELAS INICIAIS (index.html e jogo.html) */
+.page-criar,
+.page-jogo {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.cartao-entrada {
+  width: 100%;
+  max-width: 500px;
+  padding: 34px 32px;
+  border-radius: 26px;
+  box-sizing: border-box;
+}
+
+.page-jogo .cartao-entrada {
+  text-align: center;
+}
+
+.cartao-entrada h1,
+.cartao-entrada h2 {
+  margin-top: 0;
+}
+
+.page-criar .campo {
+  margin-bottom: 16px;
+}
+
+.page-criar .item-participante {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.page-criar input,
+.page-jogo input {
+  width: 100%;
+  padding: 13px 16px;
+  margin-top: 6px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #222;
+  border: none;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.page-criar .btn-principal-presente,
+.page-jogo .btn-principal-presente {
+  width: 100%;
+  padding: 14px 18px;
+  margin-top: 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #7a0c15;
+  font-weight: bold;
+  font-size: 17px;
+  box-sizing: border-box;
+}
+
+/* Botões minimalistas (texto + ícone sem caixa colorida) */
+.page-criar .btn-minimalista {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 2px;
+  margin-top: 6px;
+  background: transparent;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 0;
+}
+
+.page-criar .btn-minimalista:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.page-criar .btn-download-tabela {
+  margin-top: 14px;
+  font-size: 17px;
+}
+
+.page-criar .btn-remover {
+  width: auto;
+  padding: 6px 8px;
+  margin-top: 6px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 17px;
+}
+
+.page-criar .btn-remover:hover {
+  color: #ffffff;
+}
+
+.resultado-criacao {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.resultado-criacao a {
+  color: #ffffff;
+  word-break: break-all;
+}
+
+.page-criar ul {
+  background: rgba(55, 0, 5, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 12px 26px;
+  border-radius: 12px;
+}

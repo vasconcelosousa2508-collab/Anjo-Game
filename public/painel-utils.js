@@ -2,21 +2,21 @@ window.PainelUtils = (function() {
   const ENFEITE_PADRAO = 'bola-vermelha';
 
   const CATALOGO_ENFEITES = [
-    { id: 'floco', nome: 'floco' },
-    { id: 'homem-biscoito', nome: 'homem biscoito' },
+    { id: 'floco', nome: 'Floco' },
+    { id: 'homem-biscoito', nome: 'Biscoito' },
 
-    { id: 'bola-amarela', nome: 'bola amarela' },
-    { id: 'bola-laranja', nome: 'bola laranja' },
-    { id: 'bola-roxa', nome: 'bola roxa' },
-    { id: 'bola-verde', nome: 'bola verde' },
-    { id: 'bola-vermelha', nome: 'bola vermelha' },    
+    { id: 'bola-amarela', nome: 'Bola Amarela' },
+    { id: 'bola-laranja', nome: 'Bola Laranja' },
+    { id: 'bola-roxa', nome: 'Bola Roxa' },
+    { id: 'bola-verde', nome: 'Bola Verde' },
+    { id: 'bola-vermelha', nome: 'Bola Vermelha' },
 
-    { id: 'bengala-azul', nome: 'bengala azul' },
-    { id: 'bengala-vermelha', nome: 'bengala vermelha' },
-    { id: 'bengala-amarela', nome: 'bengala amarela' },
-    { id: 'bengala-laranja', nome: 'bengala laranja' },
-    { id: 'bengala-verde', nome: 'bengala verde' },
-    { id: 'bengala-roxa', nome: 'bengala roxa' }
+    { id: 'bengala-azul', nome: 'Bengala Azul' },
+    { id: 'bengala-vermelha', nome: 'Bengala Vermelha' },
+    { id: 'bengala-amarela', nome: 'Bengala Amarela' },
+    { id: 'bengala-laranja', nome: 'Bengala Laranja' },
+    { id: 'bengala-verde', nome: 'Bengala Verde' },
+    { id: 'bengala-roxa', nome: 'Bengala Roxa' }
   ];
 
   const POSICOES_ENFEITES = [

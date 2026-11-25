@@ -1,0 +1,60 @@
+:root {
+  /* Tema Universal: Papel de Presente & Vidro Vinho */
+  --presente-cor-base: #c61a24;
+  --presente-estampa: url('/assets/padrao/padrao-presente.svg');
+  --presente-estampa-tamanho: 120px 120px;
+
+  --vidro-vinho-bg: rgba(98, 8, 16, 0.56);
+  --vidro-vinho-bg-hover: rgba(82, 5, 12, 0.72);
+  --vidro-texto-cor: #ffffff;
+  --vidro-blur: 2px;
+
+  /* Tema Universal: Cenário de Inverno */
+  --inverno-fundo-imagem: url('/assets/fundo-inverno.png');
+  --inverno-barra-bg: #6ec4de;
+  --inverno-texto-topo: #ffffff;
+  --inverno-verde-agua: #16988d;
+
+  --candy-cane-borda: repeating-linear-gradient(
+    -45deg,
+    #e63946 0 10px,
+    #ffffff 10px 18px,
+    #16988d 18px 28px,
+    #ffffff 28px 36px
+  );
+  --candy-cane-borda-nova: repeating-linear-gradient(
+    -45deg,
+    #f59e0b 0 10px,
+    #ffffff 10px 18px,
+    #e63946 18px 28px,
+    #ffffff 28px 36px
+  );
+}
+
+/* GERAL */
+body {
+  font-family: sans-serif;
+  margin: 0;
+  font-size: 17px;
+  color: #222;
+}
+
+button {
+  padding: 11px 18px;
+  font: 16px/1.2 inherit;
+  color: #fff;
+  background: #2e7d32;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.92;
+}
+
+.btn-fechar-popup {
+  background: #e0e0e0;
+  color: #333;
+  margin-top: 0;
+}

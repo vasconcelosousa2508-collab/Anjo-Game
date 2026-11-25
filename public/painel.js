@@ -62,7 +62,7 @@ function montarSeletorEnfeites() {
     caixa.className = 'caixa-enfeite';
 
     const icone = document.createElement('img');
-    icone.src = '/assets/' + item.id + '.svg';
+    icone.src = '/assets/enfeites/' + item.id + '.svg';
     icone.alt = item.nome;
     caixa.appendChild(icone);
 
@@ -101,14 +101,12 @@ async function carregarDados() {
     if (resposta.ok) {
       document.getElementById('nomeJogador').textContent = dados.nome;
       document.getElementById('perfilNome').textContent = dados.nome || 'Não informado';
-      document.getElementById('perfilNomeDesktop').textContent = dados.nome || 'Não informado';
     }
 
     const respostaProtegido = await fetch('/api/participantes/' + participanteId + '/protegido');
     const protegido = await respostaProtegido.json();
     const nomeProt = (respostaProtegido.ok && protegido.nome) ? protegido.nome : (protegido.erro || 'Não definido');
     document.getElementById('nomeProtegido').textContent = nomeProt;
-    document.getElementById('nomeProtegidoDesktop').textContent = nomeProt;
 
     await carregarMensagens();
   } catch (err) {
@@ -258,7 +256,7 @@ function renderizarPaginacao(mensagens, arvoreSelecionada, containerId, checarNa
 function criarIconeEnfeite(tipo) {
   const nomeArquivo = PainelUtils.normalizarTipoEnfeite(tipo);
   const img = document.createElement('img');
-  img.src = '/assets/' + nomeArquivo + '.svg';
+  img.src = '/assets/enfeites/' + nomeArquivo + '.svg';
   img.alt = nomeArquivo;
   return img;
 }
@@ -363,6 +361,7 @@ function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreI
   const totalArvores = PainelUtils.obterMaiorArvore(todasMensagens);
 
   // 1. Renderiza TODAS as mensagens juntas (mais recentes primeiro)
+  // 1. Renderiza TODAS as mensagens juntas (mais recentes primeiro)
   const listaOrdenada = [...todasMensagens].reverse();
   listaOrdenada.forEach(function(mensagem) {
     const tipo = PainelUtils.normalizarTipoEnfeite(mensagem.enfeite);
@@ -372,16 +371,19 @@ function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreI
     recado.className = 'recado-simulado' + (naoLida ? ' nao-lida' : '');
     recado.dataset.msgId = mensagem.id;
 
+    const topo = document.createElement('div');
+    topo.className = 'recado-topo';
+
     const selo = document.createElement('span');
     selo.className = 'selo-enfeite enfeite-' + tipo;
     selo.appendChild(criarIconeEnfeite(tipo));
 
-    const conteudo = document.createElement('div');
-    conteudo.className = 'recado-conteudo';
+    const info = document.createElement('div');
+    info.className = 'recado-info';
 
-    const texto = document.createElement('span');
-    texto.className = 'recado-texto';
-    texto.textContent = mensagem.texto;
+    const autorEl = document.createElement('strong');
+    autorEl.className = 'recado-autor';
+    autorEl.textContent = rotuloAutor;
 
     const meta = document.createElement('small');
     meta.className = 'recado-meta';
@@ -389,15 +391,21 @@ function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreI
     const arvoreTxt = totalArvores > 1 ? ' • Árvore ' + (mensagem.arvoreNumero || 1) : '';
     meta.textContent = dataTxt + arvoreTxt;
 
-    conteudo.append(texto, meta);
-    recado.append(selo, conteudo);
+    info.append(autorEl, meta);
+    topo.append(selo, info);
 
     if (naoLida) {
       const tag = document.createElement('span');
       tag.className = 'tag-nova';
       tag.textContent = 'Nova';
-      recado.appendChild(tag);
+      topo.appendChild(tag);
     }
+
+    const texto = document.createElement('p');
+    texto.className = 'recado-texto';
+    texto.textContent = mensagem.texto;
+
+    recado.append(topo, texto);
 
     recado.onclick = function() {
       const arvoreDaMsg = mensagem.arvoreNumero || 1;
