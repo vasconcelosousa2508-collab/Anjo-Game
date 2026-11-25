@@ -361,6 +361,7 @@ function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreI
   const totalArvores = PainelUtils.obterMaiorArvore(todasMensagens);
 
   // 1. Renderiza TODAS as mensagens juntas (mais recentes primeiro)
+  // 1. Renderiza TODAS as mensagens juntas (mais recentes primeiro)
   const listaOrdenada = [...todasMensagens].reverse();
   listaOrdenada.forEach(function(mensagem) {
     const tipo = PainelUtils.normalizarTipoEnfeite(mensagem.enfeite);
@@ -370,16 +371,19 @@ function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreI
     recado.className = 'recado-simulado' + (naoLida ? ' nao-lida' : '');
     recado.dataset.msgId = mensagem.id;
 
+    const topo = document.createElement('div');
+    topo.className = 'recado-topo';
+
     const selo = document.createElement('span');
     selo.className = 'selo-enfeite enfeite-' + tipo;
     selo.appendChild(criarIconeEnfeite(tipo));
 
-    const conteudo = document.createElement('div');
-    conteudo.className = 'recado-conteudo';
+    const info = document.createElement('div');
+    info.className = 'recado-info';
 
-    const texto = document.createElement('span');
-    texto.className = 'recado-texto';
-    texto.textContent = mensagem.texto;
+    const autorEl = document.createElement('strong');
+    autorEl.className = 'recado-autor';
+    autorEl.textContent = rotuloAutor;
 
     const meta = document.createElement('small');
     meta.className = 'recado-meta';
@@ -387,15 +391,21 @@ function renderizarMensagens(todasMensagens, arvoreSelecionada, listaId, arvoreI
     const arvoreTxt = totalArvores > 1 ? ' • Árvore ' + (mensagem.arvoreNumero || 1) : '';
     meta.textContent = dataTxt + arvoreTxt;
 
-    conteudo.append(texto, meta);
-    recado.append(selo, conteudo);
+    info.append(autorEl, meta);
+    topo.append(selo, info);
 
     if (naoLida) {
       const tag = document.createElement('span');
       tag.className = 'tag-nova';
       tag.textContent = 'Nova';
-      recado.appendChild(tag);
+      topo.appendChild(tag);
     }
+
+    const texto = document.createElement('p');
+    texto.className = 'recado-texto';
+    texto.textContent = mensagem.texto;
+
+    recado.append(topo, texto);
 
     recado.onclick = function() {
       const arvoreDaMsg = mensagem.arvoreNumero || 1;
