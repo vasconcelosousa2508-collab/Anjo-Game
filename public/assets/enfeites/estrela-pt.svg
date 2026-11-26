@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 48" width="50" height="48">
+  <defs>
+    
+    <clipPath id="estrela13-esq">
+      <rect x="0" y="0" width="25" height="48" />
+    </clipPath>
+    <clipPath id="estrela13-dir">
+      <rect x="25" y="0" width="25" height="48" />
+    </clipPath>
+
+    
+    <path id="forma-estrela13" d="M 25,3.5 C 26.2,3.5 27.1,4.3 27.6,5.5 L 32.2,15.5 L 43.2,17 C 44.5,17.2 45.3,18.2 45.3,19.4 C 45.3,20.1 44.9,20.8 44.3,21.4 L 36.2,29 L 38.2,40 C 38.4,41.3 37.6,42.4 36.4,42.6 C 35.7,42.7 35,42.5 34.4,42.1 L 25,36.8 L 15.6,42.1 C 15,42.5 14.3,42.7 13.6,42.6 C 12.4,42.4 11.6,41.3 11.8,40 L 13.8,29 L 5.7,21.4 C 5.1,20.8 4.7,20.1 4.7,19.4 C 4.7,18.2 5.5,17.2 6.8,17 L 17.8,15.5 L 22.4,5.5 C 22.9,4.3 23.8,3.5 25,3.5 Z" />
+
+    
+    <g id="numero-13" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      
+      <path d="M 18.2,21.5 L 20.5,19.5 L 20.5,30.5" />
+      <line x1="18.2" y1="30.5" x2="22.8" y2="30.5" />
+      
+      <path d="M 26.5,20 C 28,19.2 31.5,19.3 31.5,22 C 31.5,24.2 29.5,24.8 28,24.8 C 29.8,24.8 32,25.5 32,28 C 32,30.8 28.2,31 26.5,30" />
+    </g>
+  </defs>
+
+  
+  <g clip-path="url(#estrela13-esq)">
+    <use href="#forma-estrela13" fill="#FF3366" />
+    <use href="#numero-13" stroke="#F8FAFC" />
+  </g>
+
+  
+  <g clip-path="url(#estrela13-dir)">
+    <use href="#forma-estrela13" fill="#C9184A" />
+    <use href="#numero-13" stroke="#E2E8F0" />
+  </g>
+</svg>

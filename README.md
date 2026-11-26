@@ -68,7 +68,7 @@ O sistema foi desenhado para ser o mais fluido e seguro possível, dividindo-se 
 
 
 ---
-## Tecnologias Planejadas & Arquitetura
+## Tecnologias & Arquitetura
 
 * **Frontend:** HTML5, CSS3 estruturado (foco em responsividade, acessibilidade e design acolhedor) e JavaScript Vanilla (puro) para manipulação de estado e interações na tela.
 * **Backend:** **Node.js** com **Express** para gerenciamento de rotas, controle das salas de jogo e execução da lógica segura do sorteio.

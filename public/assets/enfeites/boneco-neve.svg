@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 68" width="48" height="66">
+  <defs>
+    
+    <clipPath id="boneco-esq">
+      <rect x="0" y="0" width="25" height="68" />
+    </clipPath>
+    <clipPath id="boneco-dir">
+      <rect x="25" y="0" width="25" height="68" />
+    </clipPath>
+
+    
+    <g id="corpo-boneco">
+      <circle cx="25" cy="24" r="10.5" />
+      <circle cx="25" cy="48" r="15.5" />
+    </g>
+
+    
+    <g id="cartola-boneco">
+      <rect x="16.5" y="4" width="17" height="10" rx="1.5" />
+      <rect x="12" y="13" width="26" height="3.2" rx="1.6" />
+    </g>
+
+    
+    <g id="cachecol-boneco">
+      <rect x="14.5" y="31.5" width="21" height="4.8" rx="2.4" />
+      <rect x="29.5" y="34" width="4.8" height="12" rx="2" />
+    </g>
+  </defs>
+
+  
+  <g clip-path="url(#boneco-esq)">
+    
+    <use href="#corpo-boneco" fill="#A8E6EC" />
+    
+    <use href="#cartola-boneco" fill="#1D4E6E" />
+    <rect x="16.5" y="10.2" width="17" height="2.8" fill="#00A2BD" />
+    
+    <use href="#cachecol-boneco" fill="#00B4A2" />
+  </g>
+
+  
+  <g clip-path="url(#boneco-dir)">
+    
+    <use href="#corpo-boneco" fill="#82C4D4" />
+    
+    <use href="#cartola-boneco" fill="#112A46" />
+    <rect x="16.5" y="10.2" width="17" height="2.8" fill="#007A91" />
+    
+    <use href="#cachecol-boneco" fill="#008C7E" />
+  </g>
+
+  
+  
+  <circle cx="21.2" cy="21" r="1.4" fill="#112A46" />
+  <circle cx="28.8" cy="21" r="1.4" fill="#112A46" />
+
+  
+  <circle cx="20.5" cy="26" r="0.85" fill="#112A46" />
+  <circle cx="22.6" cy="27.3" r="0.85" fill="#112A46" />
+  <circle cx="25" cy="27.8" r="0.85" fill="#112A46" />
+  <circle cx="27.4" cy="27.3" r="0.85" fill="#112A46" />
+  <circle cx="29.5" cy="26" r="0.85" fill="#112A46" />
+
+  
+  <polygon points="24.5,22.2 35.5,24 24.5,25.5" fill="#FF7B29" />
+
+  
+  <circle cx="25" cy="41.5" r="1.7" fill="#1D4E6E" />
+  <circle cx="25" cy="47.5" r="1.7" fill="#1D4E6E" />
+  <circle cx="25" cy="53.5" r="1.7" fill="#1D4E6E" />
+</svg>

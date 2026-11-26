@@ -1,5 +1,4 @@
 /* TELAS INICIAIS (index.html, criar-jogo.html e jogo.html) */
-.page-inicio,
 .page-criar,
 .page-jogo {
   min-height: 100vh;
@@ -14,11 +13,13 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
+  justify-content: center;
   justify-items: center;
   gap: clamp(24px, 5vw, 72px);
   min-height: 100vh;
   min-height: 100svh;
   padding: clamp(24px, 5vw, 72px);
+  box-sizing: border-box;
 }
 
 .cartao-entrada {
@@ -59,18 +60,6 @@
 }
 
 /* TELA DE BOAS-VINDAS (index.html) */
-.selo-boas-vindas {
-  display: inline-block;
-  padding: 5px 12px;
-  margin-bottom: 12px;
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: 0.4px;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 999px;
-}
-
 .cartao-boas-vindas h1 {
   margin-bottom: 10px;
   font-size: 30px;
@@ -156,20 +145,6 @@
   opacity: 0.94;
 }
 
-.link-voltar-entrada {
-  display: inline-block;
-  margin-bottom: 12px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 14.5px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.link-voltar-entrada:hover {
-  color: #ffffff;
-  text-decoration: underline;
-}
-
 /* FORMULÁRIOS DE CRIAR AMBIENTE E ENTRAR NO JOGO (criar-jogo.html e jogo.html) */
 .page-criar .campo {
   margin-bottom: 16px;
@@ -196,6 +171,7 @@
 }
 
 .page-criar .btn-principal-presente,
+.page-jogo .btn-principal-presente,
 .page-inicio .btn-principal-presente {
   width: 100%;
   padding: 14px 18px;

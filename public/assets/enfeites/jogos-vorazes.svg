@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 52" width="44" height="52">
+  <defs>
+    <clipPath id="jv2-esq">
+      <rect x="0" y="0" width="22" height="52" />
+    </clipPath>
+    <clipPath id="jv2-dir">
+      <rect x="22" y="0" width="22" height="52" />
+    </clipPath>
+
+    <g id="suporte-jv2">
+      <circle cx="22" cy="5.8" r="3.4" fill="none" stroke-width="2.1" />
+      <path d="M 16.2,10.5 Q 16.2,8.8 18,8.8 L 26,8.8 Q 27.8,8.8 27.8,10.5 L 27.8,15.2 Q 24.9,15.2 22,12.2 Q 19.1,15.2 16.2,15.2 Z" stroke="none" />
+    </g>
+
+    <g id="texto-jv2" font-family="system-ui, -apple-system, &#39;Segoe UI&#39;, Roboto, Helvetica, Arial, sans-serif" font-weight="900" text-anchor="middle" letter-spacing="0.3">
+      <text x="22" y="29.5" font-size="6.2">JOGOS</text>
+      <text x="22" y="36.2" font-size="5.3">VORAZES</text>
+    </g>
+
+    
+    <g id="filetes-jv2" fill="none" stroke-width="1.3" stroke-linecap="round">
+      <path d="M 13,22.2 Q 22,19.8 31,22.2" />
+      <path d="M 13,39.5 Q 22,41.9 31,39.5" />
+    </g>
+  </defs>
+
+  
+  <path d="M 22,12 A 18,18 0 0,0 22,48 Z" fill="#FF3366" />
+  <path d="M 22,12 A 18,18 0 0,1 22,48 Z" fill="#D61A4A" />
+
+  
+  <g clip-path="url(#jv2-esq)">
+    <use href="#suporte-jv2" fill="#184E68" stroke="#184E68" />
+    <use href="#filetes-jv2" stroke="#FFD200" />
+    <use href="#texto-jv2" fill="#F8FAFC" />
+  </g>
+
+  
+  <g clip-path="url(#jv2-dir)">
+    <use href="#suporte-jv2" fill="#151C48" stroke="#151C48" />
+    <use href="#filetes-jv2" stroke="#E0A800" />
+    <use href="#texto-jv2" fill="#E2E8F0" />
+  </g>
+</svg>

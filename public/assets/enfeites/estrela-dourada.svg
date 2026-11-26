@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="48" height="48">
+  <defs>
+    <clipPath id="star-esq-ouro"><rect x="0" y="0" width="50" height="100" /></clipPath>
+    <clipPath id="star-dir-ouro"><rect x="50" y="0" width="50" height="100" /></clipPath>
+    <polygon id="forma-estrela-ouro" points="50,8 62,36 93,39 69,59 76,90 50,74 24,90 31,59 7,39 38,36" stroke-width="5" stroke-linejoin="round" />
+  </defs>
+
+  
+  <use href="#forma-estrela-ouro" fill="#FFD200" stroke="#FFD200" clip-path="url(#star-esq-ouro)" />
+  
+  <use href="#forma-estrela-ouro" fill="#CC9600" stroke="#CC9600" clip-path="url(#star-dir-ouro)" />
+</svg>
