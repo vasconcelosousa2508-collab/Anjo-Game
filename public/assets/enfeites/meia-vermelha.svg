@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 52" width="44" height="52">
+  <defs>
+    <clipPath id="m1-esq"><rect x="0" y="0" width="22" height="52" /></clipPath>
+    <clipPath id="m1-dir"><rect x="22" y="0" width="22" height="52" /></clipPath>
+    <path id="m1-corpo" d="M 14,12 L 30,12 L 30,31 C 30,39.5 25,45 16.5,46 C 9.5,46.8 5.5,42.8 6,37.2 C 6.5,32 11,30.5 14,29 Z" />
+    <rect id="m1-punho" x="11.5" y="6" width="21" height="7.5" rx="3.75" />
+  </defs>
+  <g clip-path="url(#m1-esq)">
+    <use href="#m1-corpo" fill="#FF3366" />
+    <use href="#m1-punho" fill="#F8FAFC" />
+  </g>
+  <g clip-path="url(#m1-dir)">
+    <use href="#m1-corpo" fill="#C9184A" />
+    <use href="#m1-punho" fill="#CBD5E1" />
+  </g>
+</svg>
