@@ -53,6 +53,20 @@ O sistema foi desenhado para ser o mais fluido e seguro possível, dividindo-se 
   * **Meu Perfil:** Espaço onde o jogador pode personalizar seu nome, alterar sua foto de perfil e, o mais importante, acessar sua **Caixa de Entrada** para ler todas as cartinhas que o seu Anjo anônimo lhe enviou.
   * **Meu Protegido:** Ao clicar neste botão misterioso, o painel revela quem é a pessoa que ele tirou (Nome e Foto). Logo abaixo, há um campo de texto simples para que ele digite e envie suas mensagens anônimas para o seu protegido.
 
+<img width="1919" height="1070" alt="Captura de tela de 2026-11-26 14-09-10" src="https://github.com/user-attachments/assets/e9fbecf1-e30b-4c37-9930-5194392f7507" />
+<img width="1919" height="1070" alt="image" src="https://github.com/user-attachments/assets/abf4906c-c648-41ad-9074-a6dec9d07109" />
+<img width="1907" height="1069" alt="image" src="https://github.com/user-attachments/assets/04c57ab4-b422-40a8-82b2-1ed8d42ae44d" />
+<img width="739" height="734" alt="image" src="https://github.com/user-attachments/assets/877d7ea8-9efb-439b-8ed3-9798d834e0fc" />
+<img width="1919" height="1068" alt="image" src="https://github.com/user-attachments/assets/d79c040d-c2a7-4434-b33f-37ed4534c134" />
+<img width="1919" height="1069" alt="image" src="https://github.com/user-attachments/assets/0b503fdd-f081-4b35-9668-9ee0fc8010c7" />
+<img width="1904" height="1065" alt="image" src="https://github.com/user-attachments/assets/d6f3d6c1-4b4d-4c53-b095-e8af48500fb2" />
+<img width="1902" height="1070" alt="image" src="https://github.com/user-attachments/assets/ec0fb0e8-a48e-4ba8-bc0e-442cd1e9b539" />
+<img width="1905" height="1063" alt="image" src="https://github.com/user-attachments/assets/41a7aa60-0033-4730-b0a0-ab866a31fd1a" />
+<img width="1123" height="791" alt="image" src="https://github.com/user-attachments/assets/302b71d9-176f-476a-b508-fd05d1466e8f" />
+<img width="1121" height="789" alt="image" src="https://github.com/user-attachments/assets/f19f1581-467e-4059-8932-c7d8d52b34e7" />
+
+
+
 ---
 ## Tecnologias Planejadas & Arquitetura
 
