@@ -54,7 +54,7 @@ O sistema foi desenhado para ser o mais fluido e seguro possível, dividindo-se 
   * **Meu Protegido:** Ao clicar neste botão misterioso, o painel revela quem é a pessoa que ele tirou (Nome e Foto). Logo abaixo, há um campo de texto simples para que ele digite e envie suas mensagens anônimas para o seu protegido.
 
 ---
-## Tecnologias Planejadas & Arquitetura
+## Tecnologias & Arquitetura
 
 * **Frontend:** HTML5, CSS3 estruturado (foco em responsividade, acessibilidade e design acolhedor) e JavaScript Vanilla (puro) para manipulação de estado e interações na tela.
 * **Backend:** **Node.js** com **Express** para gerenciamento de rotas, controle das salas de jogo e execução da lógica segura do sorteio.
