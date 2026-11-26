@@ -2,8 +2,16 @@ window.PainelUtils = (function() {
   const ENFEITE_PADRAO = 'bola-vermelha';
 
   const CATALOGO_ENFEITES = [
+    { id: 'lampiao', nome: 'Lampião' },
+    { id: 'caju', nome: 'Caju' },
+    { id: 'mandacaru', nome: 'Mandacaru' },
+    { id: 'jangada', nome: 'Jangada' }, 
+    { id: 'sol', nome: 'Sol' },
+
     { id: 'floco', nome: 'Floco' },
     { id: 'homem-biscoito', nome: 'Biscoito' },
+    { id: 'rena', nome: 'Rena' },
+    { id: 'boneco-neve', nome: 'Boneco de Neve' },
 
     { id: 'bola-amarela', nome: 'Bola Amarela' },
     { id: 'bola-laranja', nome: 'Bola Laranja' },
@@ -16,7 +24,17 @@ window.PainelUtils = (function() {
     { id: 'bengala-amarela', nome: 'Bengala Amarela' },
     { id: 'bengala-laranja', nome: 'Bengala Laranja' },
     { id: 'bengala-verde', nome: 'Bengala Verde' },
-    { id: 'bengala-roxa', nome: 'Bengala Roxa' }
+    { id: 'bengala-roxa', nome: 'Bengala Roxa' },
+
+    { id: 'presente-azul', nome: 'Presente Azul' },
+    { id: 'presente-vermelho', nome: 'Presente Vermelho' },
+    { id: 'presente-roxo', nome: 'Presente Roxo' },
+    { id: 'presente-verde', nome: 'Presente Verde' },
+    { id: 'presente-amarelo', nome: 'Presente Amarelo' },
+
+    { id: 'estrela-dourada', nome: 'Estrela Dourada' },
+    { id: 'estrela-prateada', nome: 'Estrela Prateada' },
+    { id: 'estrela-cobre', nome: 'Estrela Cobre' },
   ];
 
   const POSICOES_ENFEITES = [

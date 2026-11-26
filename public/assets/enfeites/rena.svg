@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 60" width="52" height="58">
+  <defs>
+    
+    <clipPath id="rena-esq">
+      <rect x="0" y="0" width="27" height="60" />
+    </clipPath>
+    <clipPath id="rena-dir">
+      <rect x="27" y="0" width="27" height="60" />
+    </clipPath>
+
+    
+    <g id="chifres-rena" fill="none" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+      
+      <path d="M 21,23 C 16,17 10,14 10,6" />
+      <path d="M 15,16 C 18,14 19,11 19,8" />
+      <path d="M 13,13 C 9,13 7,11 7,9" />
+      
+      <path d="M 33,23 C 38,17 44,14 44,6" />
+      <path d="M 39,16 C 36,14 35,11 35,8" />
+      <path d="M 41,13 C 45,13 47,11 47,9" />
+    </g>
+
+    
+    <g id="orelhas-rena">
+      <path d="M 18,26 C 12,21 5,21 5,25 C 5,29 11,31 16,30 Z" />
+      <path d="M 36,26 C 42,21 49,21 49,25 C 49,29 43,31 38,30 Z" />
+    </g>
+
+    
+    <path id="cabeca-rena" d="M 27,21 C 18,21 14,27 16,35 C 18,43 21,54 27,54 C 33,54 36,43 38,35 C 40,27 36,21 27,21 Z" />
+  </defs>
+
+  
+  <g clip-path="url(#rena-esq)">
+    <use href="#chifres-rena" stroke="#1D4E6E" />
+    <use href="#orelhas-rena" fill="#E3B34C" />
+    <use href="#cabeca-rena" fill="#E3B34C" />
+    
+    <path d="M 15,26.5 C 11,23.5 7.5,24 7.5,25.5 C 7.5,27 11,28.5 14.5,28 Z" fill="#C4912C" />
+  </g>
+
+  
+  <g clip-path="url(#rena-dir)">
+    <use href="#chifres-rena" stroke="#112A46" />
+    <use href="#orelhas-rena" fill="#C4912C" />
+    <use href="#cabeca-rena" fill="#C4912C" />
+    
+    <path d="M 39,26.5 C 43,23.5 46.5,24 46.5,25.5 C 46.5,27 43,28.5 39.5,28 Z" fill="#9E711B" />
+  </g>
+
+  
+  <circle cx="21" cy="36" r="2.2" fill="#112A46" />
+  <circle cx="33" cy="36" r="2.2" fill="#112A46" />
+
+  
+  <g clip-path="url(#rena-esq)">
+    <ellipse cx="27" cy="48.5" rx="4.2" ry="3" fill="#FF3B5C" />
+  </g>
+  <g clip-path="url(#rena-dir)">
+    <ellipse cx="27" cy="48.5" rx="4.2" ry="3" fill="#CC1F3D" />
+  </g>
+</svg>

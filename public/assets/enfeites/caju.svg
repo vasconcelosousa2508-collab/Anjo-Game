@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 46 58" width="46" height="58">
+  <defs>
+    
+    <clipPath id="caju-esq">
+      <rect x="0" y="0" width="23" height="58" />
+    </clipPath>
+    <clipPath id="caju-dir">
+      <rect x="23" y="0" width="23" height="58" />
+    </clipPath>
+
+    
+    <path id="forma-castanha" d="M 21,23 C 17,22 15,18 17,15 C 18.5,13 21.5,14 22.5,13 C 23.5,11.5 20.5,10.5 19.5,8 C 18.5,5.5 21,3 24.5,3.5 C 29,4 32,9.5 31.5,16 C 31,21 27,23.5 23,23.5 Z" />
+
+    
+    <path id="forma-polpa" d="M 23,21 C 14,20 8,23 9,33 C 10,43 13,54 23,54 C 33,54 36,43 37,33 C 38,23 32,20 23,21 Z" />
+  </defs>
+
+  
+  <g clip-path="url(#caju-esq)">
+    <use href="#forma-polpa" fill="#ffa600" />
+    <use href="#forma-castanha" fill="#1D4E6E" />
+  </g>
+
+  
+  <g clip-path="url(#caju-dir)">
+    <use href="#forma-polpa" fill="#D9431A" />
+    <use href="#forma-castanha" fill="#112A46" />
+  </g>
+
+  
+  <path d="M 17.5,22 Q 23,24.5 28.5,22" fill="none" stroke="#0D1B2A" stroke-width="1.3" stroke-linecap="round" opacity="0.3" />
+</svg>
